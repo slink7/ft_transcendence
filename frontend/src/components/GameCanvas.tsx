@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Game } from "../game/Game";
 
-import * as CONF from "../game/config.ts"
+import * as CONF from "../game/config.ts";
 
+import { createSocket } from "../game/useSocket";
 
 function darkenColor(color: string, amount: number = 0.3): string {
 	const hex = color.replace("#", "");
@@ -29,130 +30,163 @@ export default function GameCanvas() {
 	 *			&
 	 *		Game Loop
 	 */
+	const socketRef = useRef<WebSocket | null>(null);
+	const [gameState, setGameState] = useState<any>(null);
 
 	useEffect(() => {
-		const canvas: Canvas = canvasRef.current!;
-		const ctx = canvas.getContext("2d")!;
-
-		gameRef.current = new Game();
-		const game = gameRef.current;
-
-		let lastTime = 0;
-		let dropCounter = 0;
-		const dropInterval = 500;
-
-		function draw() {
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-			ctx.fillStyle = "#404040";
-			for (let y: number = 0; y <= CONF.HEIGHT; ++y)
-				ctx.fillRect(0, y * CONF.CELL_SIZE - 1, CONF.REAL_WIDTH, 2);
-			for (let x: number = 0; x <= CONF.WIDTH; ++x)
-				ctx.fillRect(x * CONF.CELL_SIZE - 1, 0, 2, CONF.REAL_HEIGHT);
-
-			function drawGrid(grid: Cell[][], x0: number, y0: number, palette: string[]) {
-				grid.forEach((row: Cell[], y: number) => {
-					const realY = (y0 + y) * CONF.CELL_SIZE;
-					row.forEach((cell: Cell, x: number) => {
-						if (cell == 0)
-							return ;
-						const realX = (x0 + x) * CONF.CELL_SIZE;
-						const color1 = palette[(cell - 1) % palette.length];
-						const color2 = darkenColor(color1, 0.3);
-						// const gradBack = ctx.createLinearGradient(realX, realY, realX + CONF.CELL_SIZE, realY + CONF.CELL_SIZE);
-						const gradBack = ctx.createRadialGradient(realX, realY, 0.2, realX, realY, 1.4 * CONF.CELL_SIZE);
-						gradBack.addColorStop(0, color1);
-						gradBack.addColorStop(1, color2);
-						ctx.fillStyle = gradBack;
-						ctx.fillRect(
-							realX,
-							realY,
-							CONF.CELL_SIZE,
-							CONF.CELL_SIZE
-						);
-						ctx.strokeStyle = color2;
-						ctx.strokeRect(
-							realX,
-							realY,
-							CONF.CELL_SIZE,
-							CONF.CELL_SIZE
-						);
-					});
-				});
+		socketRef.current = createSocket((msg) => {
+			if (msg.type === "STATE") {
+				setGameState(msg);
 			}
-			const pal: string[] = CONF.PALETTES[paletteRef.current];
-			drawGrid(game.board.grid, 0, 0, pal);
-			drawGrid(game.currentPiece.shape, game.currentPiece.x, game.currentPiece.y, pal);
-
-			const dangerZone = 8;
-			const danger = game.board.grid.slice(0, dangerZone).filter(row => row.some(cell => cell !== 0)).length;
-			const dangerCoef = danger / dangerZone;
-
-			if (danger) {
-				const pulse = Math.sin(Date.now() * 0.01 * dangerCoef) * 0.5 + 0.5;
-
-				ctx.fillStyle = `rgba(255, 0, 0, ${0.05 + pulse * (0.1 * dangerCoef)})`;
-				ctx.fillRect(0, 0, canvas.width, canvas.height);
-			}
-		}
-
-		function loop(time: number) {
-			const delta = time - lastTime;
-			lastTime = time;
-
-			dropCounter += delta;
-
-			if (dropCounter > dropInterval) {
-				game.update();
-				setScore(game.score)
-				dropCounter = 0;
-			}
-
-			draw();
-
-			requestAnimationFrame(loop);
-		}
-
-		requestAnimationFrame(loop);
+		});
 	}, []);
-
-	/**
-	 *				Player Inputs
-	 */
 
 	useEffect(() => {
-		const handleKeyDown = (e: KeyboardEvent) => {
-			const game: Game = gameRef.current;
-			if (!game) return;
+		const handleKey = (e: KeyboardEvent) => {
+			if (!socketRef.current) return;
 
-			const inputs = [
-				["ArrowLeft", () => { game.currentPiece.x--; }],
-				["ArrowRight", () => { game.currentPiece.x++; }],
-				["ArrowDown", () => { game.currentPiece.y++; }],
-				["ArrowUp", () => { game.currentPiece.rotate(); }],
-				["d", () => { console.log(game.currentPiece.shape); }]
-			];
-
-			inputs.forEach((value) => {
-				if (e.key === value[0]) {
-					const oldPiece = game.currentPiece.clone();
-
-					value[1]();
-					if (!game.isValidPosition(game.currentPiece, 0, 0))
-						game.currentPiece = oldPiece;
-				}
-			});
-
-			if (Number(e.key) >= 0 && Number(e.key) < CONF.PALETTES.length)
-				paletteRef.current = Number(e.key);
+			if (e.key === "ArrowLeft") {
+				socketRef.current.send(JSON.stringify({ type: "LEFT" }));
+			}
+			if (e.key === "ArrowRight") {
+				socketRef.current.send(JSON.stringify({ type: "RIGHT" }));
+			}
 		};
 
-		window.addEventListener("keydown", handleKeyDown);
+		window.addEventListener("keydown", handleKey);
 
-		return () => {
-			window.removeEventListener("keydown", handleKeyDown);
-		};
+		return () => window.removeEventListener("keydown", handleKey);
 	}, []);
+
+	useEffect(() => {
+		if (!gameState) return;
+
+		console.log("Position:", gameState.x);
+	}, [gameState]);
+
+	// useEffect(() => {
+	// 	const canvas: Canvas = canvasRef.current!;
+	// 	const ctx = canvas.getContext("2d")!;
+	//
+	// 	gameRef.current = new Game();
+	// 	const game = gameRef.current;
+	//
+	// 	let lastTime = 0;
+	// 	let dropCounter = 0;
+	// 	const dropInterval = 500;
+	//
+	// 	function draw() {
+	// 		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	//
+	// 		ctx.fillStyle = "#404040";
+	// 		for (let y: number = 0; y <= CONF.HEIGHT; ++y)
+	// 			ctx.fillRect(0, y * CONF.CELL_SIZE - 1, CONF.REAL_WIDTH, 2);
+	// 		for (let x: number = 0; x <= CONF.WIDTH; ++x)
+	// 			ctx.fillRect(x * CONF.CELL_SIZE - 1, 0, 2, CONF.REAL_HEIGHT);
+	//
+	// 		function drawGrid(grid: Cell[][], x0: number, y0: number, palette: string[]) {
+	// 			grid.forEach((row: Cell[], y: number) => {
+	// 				const realY = (y0 + y) * CONF.CELL_SIZE;
+	// 				row.forEach((cell: Cell, x: number) => {
+	// 					if (cell == 0)
+	// 						return ;
+	// 					const realX = (x0 + x) * CONF.CELL_SIZE;
+	// 					const color1 = palette[(cell - 1) % palette.length];
+	// 					const color2 = darkenColor(color1, 0.3);
+	// 					// const gradBack = ctx.createLinearGradient(realX, realY, realX + CONF.CELL_SIZE, realY + CONF.CELL_SIZE);
+	// 					const gradBack = ctx.createRadialGradient(realX, realY, 0.2, realX, realY, 1.4 * CONF.CELL_SIZE);
+	// 					gradBack.addColorStop(0, color1);
+	// 					gradBack.addColorStop(1, color2);
+	// 					ctx.fillStyle = gradBack;
+	// 					ctx.fillRect(
+	// 						realX,
+	// 						realY,
+	// 						CONF.CELL_SIZE,
+	// 						CONF.CELL_SIZE
+	// 					);
+	// 					ctx.strokeStyle = color2;
+	// 					ctx.strokeRect(
+	// 						realX,
+	// 						realY,
+	// 						CONF.CELL_SIZE,
+	// 						CONF.CELL_SIZE
+	// 					);
+	// 				});
+	// 			});
+	// 		}
+	// 		const pal: string[] = CONF.PALETTES[paletteRef.current];
+	// 		drawGrid(game.board.grid, 0, 0, pal);
+	// 		drawGrid(game.currentPiece.shape, game.currentPiece.x, game.currentPiece.y, pal);
+	//
+	// 		const dangerZone = 8;
+	// 		const danger = game.board.grid.slice(0, dangerZone).filter(row => row.some(cell => cell !== 0)).length;
+	// 		const dangerCoef = danger / dangerZone;
+	//
+	// 		if (danger) {
+	// 			const pulse = Math.sin(Date.now() * 0.01 * dangerCoef) * 0.5 + 0.5;
+	//
+	// 			ctx.fillStyle = `rgba(255, 0, 0, ${0.05 + pulse * (0.1 * dangerCoef)})`;
+	// 			ctx.fillRect(0, 0, canvas.width, canvas.height);
+	// 		}
+	// 	}
+	//
+	// 	function loop(time: number) {
+	// 		const delta = time - lastTime;
+	// 		lastTime = time;
+	//
+	// 		dropCounter += delta;
+	//
+	// 		if (dropCounter > dropInterval) {
+	// 			game.update();
+	// 			setScore(game.score)
+	// 			dropCounter = 0;
+	// 		}
+	//
+	// 		draw();
+	//
+	// 		requestAnimationFrame(loop);
+	// 	}
+	//
+	// 	requestAnimationFrame(loop);
+	// }, []);
+	//
+	// /**
+	//  *				Player Inputs
+	//  */
+	//
+	// useEffect(() => {
+	// 	const handleKeyDown = (e: KeyboardEvent) => {
+	// 		const game: Game = gameRef.current;
+	// 		if (!game) return;
+	//
+	// 		const inputs = [
+	// 			["ArrowLeft", () => { game.currentPiece.x--; }],
+	// 			["ArrowRight", () => { game.currentPiece.x++; }],
+	// 			["ArrowDown", () => { game.currentPiece.y++; }],
+	// 			["ArrowUp", () => { game.currentPiece.rotate(); }],
+	// 			["d", () => { console.log(game.currentPiece.shape); }]
+	// 		];
+	//
+	// 		inputs.forEach((value) => {
+	// 			if (e.key === value[0]) {
+	// 				const oldPiece = game.currentPiece.clone();
+	//
+	// 				value[1]();
+	// 				if (!game.isValidPosition(game.currentPiece, 0, 0))
+	// 					game.currentPiece = oldPiece;
+	// 			}
+	// 		});
+	//
+	// 		if (Number(e.key) >= 0 && Number(e.key) < CONF.PALETTES.length)
+	// 			paletteRef.current = Number(e.key);
+	// 	};
+	//
+	// 	window.addEventListener("keydown", handleKeyDown);
+	//
+	// 	return () => {
+	// 		window.removeEventListener("keydown", handleKeyDown);
+	// 	};
+	// }, []);
 
 	return (
 		<div>
