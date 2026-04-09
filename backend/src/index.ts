@@ -1,60 +1,20 @@
-import express from "express";
-import http from "http";
-import { WebSocketServer, WebSocket } from "ws";
+import { createHTTPServer } from "./server/http";
+import { createWebSocketServer } from "./server/websocket";
+import { GameManager } from "./game/GameManager";
 
-const app = express();
-const server = http.createServer(app);
 const PORT = 3000;
 
-const wss = new WebSocketServer({ server });
+const gameManager = new GameManager();
 
-app.get("/", (req, res) => {
-  res.send("Traneeeeeeeeeescendence backend is running 🚀");
+const httpServer = createHTTPServer();
+
+createWebSocketServer(httpServer, gameManager);
+
+httpServer.listen(PORT, () => {
+	console.log(`Server running on http://localhost:${PORT}`);
 });
 
-server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-
-//
-
-
-console.log("WebSocket server running on ws://localhost:7282");
-
-type Player = {
-	socket: any;
-	x: number;
-	y: number;
-};
-
-const players = new Map<any, Player>();
-
-wss.on("connection", (ws: WebSocket) => {
-	console.log("Client connecté");
-
-	const player: Player = {
-		socket: ws,
-		x: 5,
-		y: 0,
-	};
-
-	players.set(ws, player);
-
-	ws.on("message", (data: any) => {
-		const msg = JSON.parse(data.toString());
-
-		if (msg.type === "LEFT") player.x--;
-		if (msg.type === "RIGHT") player.x++;
-
-		// 🔁 envoyer état
-		ws.send(JSON.stringify({
-			type: "STATE",
-			x: player.x,
-			y: player.y
-		}));
-	});
-
-	ws.on("close", () => {
-		players.delete(ws);
-	});
-});
+setInterval(() => {
+	gameManager.update();
+	gameManager.broadcast();
+}, 1000);

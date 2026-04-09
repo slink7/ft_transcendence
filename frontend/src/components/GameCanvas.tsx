@@ -34,10 +34,13 @@ export default function GameCanvas() {
 	const [gameState, setGameState] = useState<any>(null);
 
 	useEffect(() => {
+		if (socketRef.current)
+			return ;
 		socketRef.current = createSocket((msg) => {
 			if (msg.type === "STATE") {
 				setGameState(msg);
 			}
+			console.log(JSON.stringify(msg));
 		});
 	}, []);
 
@@ -185,7 +188,9 @@ export default function GameCanvas() {
 
 	return (
 		<div>
-			<p> {gameState?.type} {gameState?.x} {gameState?.y} </p>
+		<p> salut </p>
+			<p> {gameState?.type} {gameState?.x} {gameState?.y} {gameState?.score} </p>
+			<p> { JSON.stringify(gameState) } </p>
 		</div>
 	);
 }
