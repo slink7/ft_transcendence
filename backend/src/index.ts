@@ -17,4 +17,4 @@ httpServer.listen(PORT, () => {
 setInterval(() => {
 	gameManager.update();
 	gameManager.broadcast();
-}, 1000);
+}, 50);

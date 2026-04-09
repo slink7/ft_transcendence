@@ -5,7 +5,7 @@ export class Piece {
 	x: number;
 	y: number;
 
-	constructor() {
+	constructor(x0: number = 0, y0: number = 0) {
 		this.shape = this.cloneShape(CONF.SHAPES[Math.floor(Math.random() * CONF.SHAPES.length)]);
 		let color: number = Math.floor(Math.random() * CONF.SHAPES.length) + 1;
 		this.shape.forEach((row, y) => {
@@ -13,8 +13,8 @@ export class Piece {
 				this.shape[y][x] = value * color;
 			})
 		});
-		this.x = 3;
-		this.y = 0;
+		this.x = x0;
+		this.y = y0;
 	}
 
 	rotate() {

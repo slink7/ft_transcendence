@@ -5,7 +5,7 @@ export function createWebSocketServer(server: any, gameManager: GameManager) {
 	const wss = new WebSocketServer({ server });
 
 	wss.on("connection", (ws: WebSocket) => {
-		console.log("Client connected");
+		console.log("Client connected ", ws._socket.remoteAddress);
 
 		const playerId = gameManager.addPlayer(ws);
 
@@ -20,7 +20,7 @@ export function createWebSocketServer(server: any, gameManager: GameManager) {
 		});
 
 		ws.on("close", () => {
-			console.log("Client disconnected");
+			console.log("Client disconnected ", ws._socket.remoteAddress);
 			gameManager.removePlayer(playerId);
 		});
 	});
