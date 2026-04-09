@@ -1,29 +1,29 @@
 import { useEffect, useRef, useState } from "react";
-import { Game } from "../game/Game";
+// import { Game } from "../game/Game";
 
 import * as CONF from "../game/config.ts";
 
 import { createSocket } from "../game/useSocket";
 
-function darkenColor(color: string, amount: number = 0.3): string {
-	const hex = color.replace("#", "");
-
-	const r = parseInt(hex.substring(0, 2), 16);
-	const g = parseInt(hex.substring(2, 4), 16);
-	const b = parseInt(hex.substring(4, 6), 16);
-
-	const newR = Math.floor(r * (1 - amount));
-	const newG = Math.floor(g * (1 - amount));
-	const newB = Math.floor(b * (1 - amount));
-
-	return `rgb(${newR}, ${newG}, ${newB})`;
-}
+// function darkenColor(color: string, amount: number = 0.3): string {
+// 	const hex = color.replace("#", "");
+//
+// 	const r = parseInt(hex.substring(0, 2), 16);
+// 	const g = parseInt(hex.substring(2, 4), 16);
+// 	const b = parseInt(hex.substring(4, 6), 16);
+//
+// 	const newR = Math.floor(r * (1 - amount));
+// 	const newG = Math.floor(g * (1 - amount));
+// 	const newB = Math.floor(b * (1 - amount));
+//
+// 	return `rgb(${newR}, ${newG}, ${newB})`;
+// }
 
 export default function GameCanvas() {
-	const canvasRef: HTMLCanvasElement = useRef<HTMLCanvasElement>(null);
-	const gameRef: Game = useRef<Game | null>(null);
-	const [score, setScore] = useState(0);
-	const paletteRef = useRef(0);
+	// const canvasRef: HTMLCanvasElement = useRef<HTMLCanvasElement>(null);
+	// const gameRef: Game = useRef<Game | null>(null);
+	// const [score, setScore] = useState(0);
+	// const paletteRef = useRef(0);
 
 	/**
 	 *		Initialisation
@@ -58,11 +58,6 @@ export default function GameCanvas() {
 		return () => window.removeEventListener("keydown", handleKey);
 	}, []);
 
-	useEffect(() => {
-		if (!gameState) return;
-
-		console.log("Position:", gameState.x);
-	}, [gameState]);
 
 	// useEffect(() => {
 	// 	const canvas: Canvas = canvasRef.current!;
@@ -190,8 +185,7 @@ export default function GameCanvas() {
 
 	return (
 		<div>
-			<h2> Score: {score} </h2>
-			<canvas ref={canvasRef} width={CONF.REAL_WIDTH} height={CONF.REAL_HEIGHT} />
+			<p> {gameState?.type} {gameState?.x} {gameState?.y} </p>
 		</div>
 	);
 }

@@ -1,6 +1,6 @@
 import express from "express";
 import http from "http";
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 
 const app = express();
 const server = http.createServer(app);
@@ -29,7 +29,7 @@ type Player = {
 
 const players = new Map<any, Player>();
 
-wss.on("connection", (ws) => {
+wss.on("connection", (ws: WebSocket) => {
 	console.log("Client connecté");
 
 	const player: Player = {
@@ -40,7 +40,7 @@ wss.on("connection", (ws) => {
 
 	players.set(ws, player);
 
-	ws.on("message", (data) => {
+	ws.on("message", (data: any) => {
 		const msg = JSON.parse(data.toString());
 
 		if (msg.type === "LEFT") player.x--;
