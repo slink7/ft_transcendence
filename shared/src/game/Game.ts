@@ -97,7 +97,11 @@ export class Game {
 	}
 
 	rotate() {
-		this.currentPiece.rotate();
+		const newPiece = this.currentPiece.clone();
+
+		newPiece.rotate();
+		if (this.isValidPosition(newPiece, 0, 0))
+			this.currentPiece.rotate();
 	}
 
 	getState() {

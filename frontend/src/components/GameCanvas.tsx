@@ -24,6 +24,7 @@ function darkenColor(color: string, amount: number = 0.3): string {
 	return `rgb(${newR}, ${newG}, ${newB})`;
 }
 
+
 export default function GameCanvas() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const socketRef = useRef<WebSocket | null>(null);
@@ -151,7 +152,7 @@ export default function GameCanvas() {
 			const dangerZone = 8;
 			const dangerRows = board.grid
 				.slice(0, dangerZone)
-				.filter((row) => row.some((cell) => cell !== 0)).length;
+				.filter((row: Cell[]) => row.some((cell: Cell) => cell !== 0)).length;
 
 			if (dangerRows > 0) {
 				const coef = dangerRows / dangerZone;
