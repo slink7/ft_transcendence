@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import * as CONF from "../game/Config";
+import { WIDTH, HEIGHT } from "/app/shared/src/game/Config.ts";
 import { createSocket } from "../game/useSocket";
 
 type Cell = number;
@@ -9,6 +9,17 @@ type Piece = {
 	x: number;
 	y: number;
 };
+
+const CELL_SIZE: number = 30;
+const REAL_WIDTH: number = WIDTH * CELL_SIZE;
+const REAL_HEIGHT: number = HEIGHT * CELL_SIZE;
+
+export const PALETTES: string[][] = [
+	["#00FFFF", "#FFFF00", "#AC00FF", "#FFA700", "#0000FF", "#FF0000", "#00FF00"], //Classique
+	["#561D25", "#CE8147", "#ECDD7B", "#D3E298", "#CDE7BE"], //Pastel
+	["#202020", "#4b5043", "#9bc4bc", "#d3ffe9", "#8ddbe0"], //Glacial
+	["#2e1f27", "#854d27", "#dd7230", "#f4c95d", "#e7e393"], //Summer
+]
 
 function darkenColor(color: string, amount: number = 0.3): string {
 	const hex = color.replace("#", "");
@@ -69,13 +80,12 @@ export default function GameCanvas() {
 			};
 
 			if (map[e.key]) {
-				console.log("Sending ", map[e.key]);
 				socketRef.current.send(JSON.stringify({ type: map[e.key] }));
 			}
 
 			// 🎨 palette switch
 			if (!isNaN(Number(e.key))) {
-				paletteRef.current = Number(e.key) % CONF.PALETTES.length;
+				paletteRef.current = Number(e.key) % PALETTES.length;
 			}
 		};
 
@@ -102,8 +112,8 @@ export default function GameCanvas() {
 				row.forEach((cell, x) => {
 					if (!cell) return;
 
-					const realX = (offsetX + x) * CONF.CELL_SIZE;
-					const realY = (offsetY + y) * CONF.CELL_SIZE;
+					const realX = (offsetX + x) * CELL_SIZE;
+					const realY = (offsetY + y) * CELL_SIZE;
 
 					const color1 = palette[(cell - 1) % palette.length];
 					const color2 = darkenColor(color1, 0.3);
@@ -114,17 +124,17 @@ export default function GameCanvas() {
 						0.2,
 						realX,
 						realY,
-						1.4 * CONF.CELL_SIZE
+						1.4 * CELL_SIZE
 					);
 
 					grad.addColorStop(0, color1);
 					grad.addColorStop(1, color2);
 
 					ctx.fillStyle = grad;
-					ctx.fillRect(realX, realY, CONF.CELL_SIZE, CONF.CELL_SIZE);
+					ctx.fillRect(realX, realY, CELL_SIZE, CELL_SIZE);
 
 					ctx.strokeStyle = color2;
-					ctx.strokeRect(realX, realY, CONF.CELL_SIZE, CONF.CELL_SIZE);
+					ctx.strokeRect(realX, realY, CELL_SIZE, CELL_SIZE);
 				});
 			});
 		}
@@ -134,14 +144,14 @@ export default function GameCanvas() {
 
 			// grid lines
 			ctx.fillStyle = "#404040";
-			for (let y = 0; y <= CONF.HEIGHT; y++) {
-				ctx.fillRect(0, y * CONF.CELL_SIZE - 1, CONF.REAL_WIDTH, 2);
+			for (let y = 0; y <= HEIGHT; y++) {
+				ctx.fillRect(0, y * CELL_SIZE - 1, REAL_WIDTH, 2);
 			}
-			for (let x = 0; x <= CONF.WIDTH; x++) {
-				ctx.fillRect(x * CONF.CELL_SIZE - 1, 0, 2, CONF.REAL_HEIGHT);
+			for (let x = 0; x <= WIDTH; x++) {
+				ctx.fillRect(x * CELL_SIZE - 1, 0, 2, REAL_HEIGHT);
 			}
 
-			const palette = CONF.PALETTES[paletteRef.current];
+			const palette = PALETTES[paletteRef.current];
 
 			drawGrid(board.grid, 0, 0, palette);
 			drawGrid(piece.shape, piece.x, piece.y, palette);
@@ -171,8 +181,8 @@ export default function GameCanvas() {
 			<h2>Score: {score}</h2>
 			<canvas
 				ref={canvasRef}
-				width={CONF.REAL_WIDTH}
-				height={CONF.REAL_HEIGHT}
+				width={REAL_WIDTH}
+				height={REAL_HEIGHT}
 			/>
 			<p> { JSON.stringify(board) } </p>
 			<p> { JSON.stringify(piece) } </p>
