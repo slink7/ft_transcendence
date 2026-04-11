@@ -1,11 +1,11 @@
-import { WIDTH, HEIGHT } from "./Config.ts"
+import { GAME_CONFIG } from "../../config/game.ts"
 
 export type Cell = number;
 
 export class Board {
 	grid: Cell[][];
-	height: number = HEIGHT;
-	width: number = WIDTH;
+	height: number = GAME_CONFIG.HEIGHT;
+	width: number = GAME_CONFIG.WIDTH;
 
 	constructor() {
 		this.reset();

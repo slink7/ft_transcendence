@@ -1,4 +1,5 @@
-import { WIDTH, HEIGHT } from "/app/shared/src/game/Config.ts";
+import { CONFIG } from "../config.ts";
+import { GAME_CONFIG } from "/app/shared/config/game.ts"
 import { Game } from "/app/shared/src/game/Game.ts";
 
 export const PALETTES: string[][] = [
@@ -8,9 +9,8 @@ export const PALETTES: string[][] = [
 	["#2e1f27", "#854d27", "#dd7230", "#f4c95d", "#e7e393"], //Summer
 ]
 
-const CELL_SIZE: number = 30;
-const REAL_WIDTH: number = WIDTH * CELL_SIZE;
-const REAL_HEIGHT: number = HEIGHT * CELL_SIZE;
+const REAL_WIDTH: number = GAME_CONFIG.WIDTH * CONFIG.CELL_SIZE;
+const REAL_HEIGHT: number = GAME_CONFIG.HEIGHT * CONFIG.CELL_SIZE;
 
 function darkenColor(color: string, amount: number = 0.3): string {
 	const hex = color.replace("#", "");
@@ -37,8 +37,8 @@ export function draw(canvas: Canvas, ctx: CanvasRenderingContext2D, game: Game, 
 			row.forEach((cell, x) => {
 				if (!cell) return;
 
-				const realX = (offsetX + x) * CELL_SIZE;
-				const realY = (offsetY + y) * CELL_SIZE;
+				const realX = (offsetX + x) * CONFIG.CELL_SIZE;
+				const realY = (offsetY + y) * CONFIG.CELL_SIZE;
 
 				const color1 = palette[(cell - 1) % palette.length];
 				const color2 = darkenColor(color1, 0.3);
@@ -49,17 +49,17 @@ export function draw(canvas: Canvas, ctx: CanvasRenderingContext2D, game: Game, 
 					0.2,
 					realX,
 					realY,
-					1.4 * CELL_SIZE
+					1.4 * CONFIG.CELL_SIZE
 				);
 
 				grad.addColorStop(0, color1);
 				grad.addColorStop(1, color2);
 
 				ctx.fillStyle = grad;
-				ctx.fillRect(realX, realY, CELL_SIZE, CELL_SIZE);
+				ctx.fillRect(realX, realY, CONFIG.CELL_SIZE, CONFIG.CELL_SIZE);
 
 				ctx.strokeStyle = color2;
-				ctx.strokeRect(realX, realY, CELL_SIZE, CELL_SIZE);
+				ctx.strokeRect(realX, realY, CONFIG.CELL_SIZE, CONFIG.CELL_SIZE);
 			});
 		});
 	}
@@ -68,11 +68,11 @@ export function draw(canvas: Canvas, ctx: CanvasRenderingContext2D, game: Game, 
 
 	// grid lines
 	ctx.fillStyle = "#404040";
-	for (let y = 0; y <= HEIGHT; y++) {
-		ctx.fillRect(0, y * CELL_SIZE - 1, REAL_WIDTH, 2);
+	for (let y = 0; y <= GAME_CONFIG.HEIGHT; y++) {
+		ctx.fillRect(0, y * CONFIG.CELL_SIZE - 1, REAL_WIDTH, 2);
 	}
-	for (let x = 0; x <= WIDTH; x++) {
-		ctx.fillRect(x * CELL_SIZE - 1, 0, 2, REAL_HEIGHT);
+	for (let x = 0; x <= GAME_CONFIG.WIDTH; x++) {
+		ctx.fillRect(x * CONFIG.CELL_SIZE - 1, 0, 2, REAL_HEIGHT);
 	}
 
 	const palette = PALETTES[paletteID];

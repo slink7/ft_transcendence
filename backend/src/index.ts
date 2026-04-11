@@ -1,8 +1,7 @@
 import { createHTTPServer } from "./server/http";
 import { createWebSocketServer } from "./server/websocket";
 import { GameManager } from "./game/GameManager";
-
-const PORT = 3000;
+import { CONFIG } from "./config.ts"
 
 const gameManager = new GameManager();
 
@@ -10,11 +9,11 @@ const httpServer = createHTTPServer();
 
 createWebSocketServer(httpServer, gameManager);
 
-httpServer.listen(PORT, () => {
-	console.log(`Server running on http://localhost:${PORT}`);
+httpServer.listen(CONFIG.PORT, () => {
+	console.log(`Server running on http://localhost:${CONFIG.PORT}`);
 });
 
 setInterval(() => {
 	gameManager.update();
 	gameManager.broadcast();
-}, 500);
+}, CONFIG.TICK_RATE);

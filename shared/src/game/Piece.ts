@@ -1,4 +1,4 @@
-import * as CONF from "./Config.ts"
+import { GAME_CONFIG } from "../../config/game.ts"
 
 export class Piece {
 	shape: number[][];
@@ -7,8 +7,8 @@ export class Piece {
 
 
 	constructor(x0: number = 0, y0: number = 0) {
-		this.shape = this.cloneShape(CONF.SHAPES[Math.floor(Math.random() * CONF.SHAPES.length)]);
-		let color: number = Math.floor(Math.random() * CONF.SHAPES.length) + 1;
+		this.shape = this.cloneShape(GAME_CONFIG.SHAPES[Math.floor(Math.random() * GAME_CONFIG.SHAPES.length)]);
+		let color: number = Math.floor(Math.random() * GAME_CONFIG.SHAPES.length) + 1;
 		this.shape.forEach((row, y) => {
 			row.forEach((value, x) => {
 				this.shape[y][x] = value * color;

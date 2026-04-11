@@ -3,13 +3,18 @@ services:
   backend:
     build: ./backend
     ports:
-      - "3000:3000"
+      - "$PORT:$PORT"
     volumes:
       - ./backend:/app
       - ./shared:/app/shared
+    environment:
+      - PORT=$PORT
+      - TICK_RATE=$TICK_RATE
     command: npm run dev
 
   frontend:
+    environment:
+      - VITE_WS_URL=$WS_URL
     build: ./frontend
     ports:
       - "5173:5173"

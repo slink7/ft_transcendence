@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { WIDTH, HEIGHT } from "/app/shared/src/game/Config.ts";
+import { GAME_CONFIG } from "/app/shared/config/game.ts"
+import { CONFIG } from "../config.ts";
 import { createSocket } from "../game/useSocket";
 import { ClientGame } from "./ClientGame.ts"
 import { draw } from "./Draw.ts"
@@ -12,9 +13,8 @@ type Piece = {
 	y: number;
 };
 
-const CELL_SIZE: number = 30;
-const REAL_WIDTH: number = WIDTH * CELL_SIZE;
-const REAL_HEIGHT: number = HEIGHT * CELL_SIZE;
+const REAL_WIDTH: number = GAME_CONFIG.WIDTH * CONFIG.CELL_SIZE;
+const REAL_HEIGHT: number = GAME_CONFIG.HEIGHT * CONFIG.CELL_SIZE;
 
 export default function GameCanvas() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
