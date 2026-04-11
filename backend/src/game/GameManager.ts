@@ -32,20 +32,7 @@ export class GameManager {
 
 		const game = player.game;
 
-		switch (msg.type) {
-			case "LEFT":
-				game.move(-1, 0);
-				break;
-			case "RIGHT":
-				game.move(1, 0);
-				break;
-			case "DOWN":
-				game.move(0, 1);
-				break;
-			case "ROTATE":
-				game.rotate();
-				break;
-		}
+		game.applyInput(msg);
 	}
 
 	update() {

@@ -11,9 +11,12 @@ export function createWebSocketServer(server: any, gameManager: GameManager) {
 
 		ws.on("message", (data) => {
 			try {
+
 				const msg = JSON.parse(data.toString());
 
 				gameManager.handleInput(playerId, msg);
+
+				ws.send(JSON.stringify({ type: "ACK" }))
 			} catch (err) {
 				console.error("Invalid message", err);
 			}
