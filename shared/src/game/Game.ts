@@ -18,7 +18,7 @@ export class Game {
 	}
 
 	update() {
-		if (this.frame++ % 20 != 19)
+		if (this.frame++ % 1 != 0)
 			return ;
 		if (this.isValidPosition(this.currentPiece, 0, 1)) {
 			this.currentPiece.y++;
@@ -41,7 +41,12 @@ export class Game {
 		this.score += 10 * clearedLines * clearedLines;
 		this.currentPiece = new Piece();
 		if (!this.isValidPosition(this.currentPiece, 0, 0))
-			this.board.reset();
+			this.reset();
+	}
+
+	reset() {
+		this.board.reset();
+		this.score = 0;
 	}
 
 	isValidPosition(
@@ -73,7 +78,7 @@ export class Game {
 			});
 		});
 	}
-	
+
 	clearLines(): number {
 		let linesCleared: number = 0;
 
@@ -89,6 +94,19 @@ export class Game {
 
 		return linesCleared;
 	}
+
+	applyInput(input: any) {
+		const array = {
+			"ROTATE": () => { this.rotate(); },
+			"RIGHT": () => { this.move(1, 0) },
+			"DOWN": () => { this.move(0, 1) },
+			"LEFT": () => { this.move(-1, 0) }
+		}
+
+		if (array[input.type])
+			array[input.type]();
+	}
+
 	move(dx: number, dy: number) {
 		if (!this.isValidPosition(this.currentPiece, dx, dy))
 			return ;
@@ -110,5 +128,11 @@ export class Game {
 			piece: this.currentPiece,
 			board: this.board
 		};
+	}
+
+	setState(state: any) {
+		this.score = state.score;
+		this.currentPiece.set(state.piece);
+		this.board = state.board;
 	}
 }

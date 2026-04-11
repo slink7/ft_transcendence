@@ -5,6 +5,7 @@ export class Piece {
 	x: number;
 	y: number;
 
+
 	constructor(x0: number = 0, y0: number = 0) {
 		this.shape = this.cloneShape(CONF.SHAPES[Math.floor(Math.random() * CONF.SHAPES.length)]);
 		let color: number = Math.floor(Math.random() * CONF.SHAPES.length) + 1;
@@ -36,6 +37,12 @@ export class Piece {
 
 	cloneShape(shape: number[][]): number[][] {
 		return shape.map(row => [...row]);
+	}
+
+	set(data: any) {
+		this.x = data.x;
+		this.y = data.y;
+		this.shape = this.cloneShape(data.shape);
 	}
 
 	clone(): Piece {
