@@ -109,3 +109,19 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Ajouté a la main */
+
+.controls {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+button {
+  font-size: 2rem;
+  padding: 20px;
+  border-radius: 50%;
+}

@@ -49,6 +49,14 @@ export default function GameCanvas() {
 	/**
 	 *  Inputs
 	 */
+
+	function registerGameInput(input: any) {
+		if (!input.type)
+			return ;
+		socketRef.current.send(JSON.stringify(input));
+		clientGameRef.current.applyLocalInput(input);
+	}
+
 	useEffect(() => {
 		const handleKey = (e: KeyboardEvent) => {
 			if (!socketRef.current) return;
@@ -61,10 +69,8 @@ export default function GameCanvas() {
 			};
 
 			const input = { type: map[e.key] };
-			if (input.type) {
-				socketRef.current.send(JSON.stringify(input));
-				clientGameRef.current.applyLocalInput(input);
-			}
+			if (input.type)
+				registerGameInput(input);
 
 			if (!isNaN(Number(e.key))) {
 				paletteRef.current = Number(e.key) % PALETTES.length;
@@ -73,6 +79,40 @@ export default function GameCanvas() {
 
 		window.addEventListener("keydown", handleKey);
 		return () => window.removeEventListener("keydown", handleKey);
+	}, []);
+
+	useEffect(() => {
+		let startX = 0;
+		let startY = 0;
+
+		const threshold = 30;
+
+		const onClick = (e: TouchEvent) => {
+			console.log("TourchStart");
+			startX = e.touches[0].clientX;
+			startY = e.touches[0].clientY;
+		};
+
+		const onTouchEnd = (e: TouchEvent) => {
+			const dx = e.changedTouches[0].clientX - startX;
+			const dy = e.changedTouches[0].clientY - startY;
+
+			if (Math.abs(dx) > Math.abs(dy)) {
+				if (dx > threshold) registerGameInput({ type: "RIGHT" });
+				else if (dx < -threshold) registerGameInput({ type: "LEFT" });
+			} else {
+				if (dy > threshold) registerGameInput({ type: "DOWN" });
+				else if (dy < -threshold) registerGameInput({ type: "ROTATE" });
+			}
+		};
+
+		window.addEventListener("touchstart", onClick);
+		window.addEventListener("touchend", onTouchEnd);
+
+		return () => {
+			window.removeEventListener("touchstart", onClick);
+			window.removeEventListener("touchend", onTouchEnd);
+		};
 	}, []);
 
 	/**
@@ -102,7 +142,6 @@ export default function GameCanvas() {
 	/**
 	 *  HTML return
 	 */
-
 	return (
 		<div>
 			<h2>Score: { clientGameRef.current.game.score}</h2>
@@ -111,11 +150,12 @@ export default function GameCanvas() {
 				width={REAL_WIDTH}
 				height={REAL_HEIGHT}
 			/>
-			<p> { JSON.stringify(clientGameRef.current.game.board) } </p>
-			<p> --- </p>
-			<p> { JSON.stringify(clientGameRef.current.game.currentPiece) } </p>
-			<p> --- </p>
-			<p> { JSON.stringify(clientGameRef.current.game.score) } </p>
+			<div className="controls">
+				<button onClick={() => registerGameInput({ type: "LEFT" })}>⬅️</button>
+				<button onClick={() => registerGameInput({ type: "RIGHT" })}>➡️</button>
+				<button onClick={() => registerGameInput({ type: "ROTATE"})}>🔄</button>
+				<button onClick={() => registerGameInput({ type: "DOWN" })}>⬇️</button>
+			</div>
 		</div>
 	);
 }
