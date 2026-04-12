@@ -49,7 +49,6 @@ export default function GameCanvas() {
 	/**
 	 *  Inputs
 	 */
-
 	function registerGameInput(input: any) {
 		if (!input.type)
 			return ;
@@ -73,7 +72,7 @@ export default function GameCanvas() {
 				registerGameInput(input);
 
 			if (!isNaN(Number(e.key))) {
-				paletteRef.current = Number(e.key) % PALETTES.length;
+				paletteRef.current = Number(e.key) % CONFIG.PALETTES.length;
 			}
 		};
 
