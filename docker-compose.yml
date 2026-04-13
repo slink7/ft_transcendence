@@ -7,6 +7,7 @@ services:
     volumes:
       - ./backend:/app
       - ./shared:/app/shared
+      - /app/node_modules
     environment:
       - PORT=$PORT
       - TICK_RATE=$TICK_RATE
@@ -21,4 +22,5 @@ services:
     volumes:
       - ./frontend:/app
       - ./shared:/app/shared
+      - /app/node_modules
     command: npm run dev
