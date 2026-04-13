@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { GAME_CONFIG } from "/app/shared/config/game.ts"
 import { CONFIG } from "../config.ts";
-import { createSocket } from "../game/useSocket";
+import { createSocket } from "./useSocket";
 import { ClientGame } from "./ClientGame.ts"
 import { draw } from "./Draw.ts"
 
