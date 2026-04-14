@@ -115,12 +115,12 @@ code {
 .controls {
   position: fixed;
   bottom: 20px;
-  width: 100%;
+  width: 50%;
   display: flex;
   justify-content: space-around;
 }
 
-button {
+.controls button {
   font-size: 2rem;
   padding: 20px;
   border-radius: 50%;
