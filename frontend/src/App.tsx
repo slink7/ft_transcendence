@@ -26,9 +26,9 @@ export default function App() {
 	// const [username, setUsername0] = useLocalStorage("username", createName());
 	// const [UUID, setUUID] = useLocalStorage("UUID", "");
 
-	const [client, setClient] = useClient();
-	const [state, setState] = useState();
-	const [room, setRoom] = useRoom();
+	const {client, setClient} = useClient();
+	const {state, setState} = useState();
+	const {room, setRoom} = useRoom();
 
 	function setUsername(name: string) {
 		setClient({name: name});

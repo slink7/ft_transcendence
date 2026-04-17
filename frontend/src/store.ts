@@ -27,56 +27,64 @@ type Store = {
 	setState: (state: State) => void;
 };
 
-export const useStore = create<Store>(persist((set) => ({
-	client: {
-		id: null,
-		name: "",
-	},
+export const useStore = create<Store>()(
+	persist((set) => ({
+		client: {
+			id: null,
+			name: "",
+		},
 
-	setClient: (client) =>
-		set((state) => ({
-			client: { ...state.client, ...client },
-		})),
+		setClient: (client) =>
+			set((state) => ({
+				client: { ...state.client, ...client },
+			})),
 
-	room: {
-		id: null,
-		clients: [],
-	},
+		room: {
+			id: null,
+			clients: [],
+		},
 
-	setRoom: (room) =>
-		set((state) => ({
-			room: { ...state.room, ...room },
-		})),
+		setRoom: (room) =>
+			set((state) => ({
+				room: { ...state.room, ...room },
+			})),
 
-	connected: false,
-	setConnected: (v) => set({ connected: v }),
+		connected: false,
+		setConnected: (v) => set({ connected: v }),
 
-	state: "HOME",
-	setState: (v: State) => set({ state: v }),
-}), {
+		state: "HOME",
+		setState: (v: State) => set({ state: v }),
+	}), {
 		name: "app-storage",
 		partialize: (state) => ({
 			client: state.client
 		})
-	}));
+	})
+);
 
 export function useClient() {
-	return [
-		useStore((s) => s.client),
-		useStore((s) => s.setClient)
-	];
+	return (useStore(
+		(s) => ({
+			client: s.client,
+			setClient: s.setClient
+		})
+	));
 }
 
 export function useRoom() {
-	return [
-		useStore((s) => s.room),
-		useStore((s) => s.setRoom)
-	];
+	return (useStore(
+		(s) => ({
+			room: s.room,
+			setRoom: s.setRoom
+		})
+	));
 }
 
 export function useState() {
-	return [
-		useStore((s) => s.state),
-		useStore((s) => s.setState)
-	]
+	return (useStore(
+		(s) => ({
+			state: s.state,
+			setState: s.setState
+		})
+	));
 }
