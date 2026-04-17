@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware"
 import { useShallow } from "zustand/shallow"
 
+import { createName } from "./scripts/createName.ts";
+
 type Client = {
 	id: string | null;
 	name: string;
@@ -32,7 +34,7 @@ export const useStore = create<Store>()(
 	persist((set) => ({
 		client: {
 			id: null,
-			name: "",
+			name: createName(),
 		},
 
 		setClient: (client) =>

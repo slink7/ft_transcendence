@@ -26,20 +26,15 @@ export default function App() {
 	const {state, setState} = useClientState();
 	const {room, setRoom} = useRoom();
 
-	function setUsername(name: string) {
-		setClient({name: name});
-		send({ type: "SET_NAME", name: name });
-	}
+	// function setUsername(name: string) {
+	// 	setClient({name: name});
+	// 	send({ type: "SET_NAME", name: name });
+	// }
 
 	useEffect(() => {
 		connectSocket({type: "HELLO", clientID: client.id});
 
-		if (!client.name) {
-			setUsername(createName());
-		} else {
-			send({ type: "SET_NAME", name: client.name });
-		}
-		console.log("UUID: ", client.id);
+		send({ type: "SET_NAME", name: client.name });
 
 		return (subscribe((msg: ServerMessage) => {
 			console.log("Received:", JSON.stringify(msg));
@@ -62,8 +57,6 @@ export default function App() {
 				<p> Wextranscendence </p>
 				<p> Current name: {client.name} </p>
 				<p> UUID: {client.id} </p>
-				<button onClick={() => { setUsername(createName()); }}> Set Random username </button>
-				<FieldSetter fieldName="Username" setField={setUsername}/>
 				<button onClick={() => { localStorage.clear(); }}> Reset local storage </button>
 				<button onClick={() => { send({type: "STUFF"}) }}> Send stuff </button>
 				<button onClick={() => { send({type: "HELLO", clientID: client.id}) }}> Log in </button>
