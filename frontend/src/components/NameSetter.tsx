@@ -26,6 +26,7 @@ export default function NameSetter() {
 					value={input}
 					placeholder="username"
 					name="username"
+					onChange={(e) => setInput(e.target.value)}
 				/>
 				<button type="submit"> Set </button>
 			</form>

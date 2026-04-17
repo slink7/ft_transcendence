@@ -22,7 +22,7 @@ export default function Home() {
 	};
 
 	const joinRoom = (formData: FormData) => {
-		const ID = formData.get("roomID");
+		const ID = formData.get("roomID") || "";
 
 		navToRoom(ID);
 	}
@@ -40,20 +40,22 @@ export default function Home() {
 
 	return (
 		<div>
-			<h1> Home </h1>
-			<h2> Welcome {client.name} </h2>
+			<h2> Home </h2>
+			<h3> Welcome {client.name} </h3>
 			<div>
-				<h3> - Customisation - </h3>
+				<h4> - Customisation - </h4>
 				<NameSetter />
 			</div>
-			<h3> - Rooms - </h3>
-			<form action={joinRoom}>
-				<input name="roomID"/>
-				<button type="submit"> Join </button>
-			</form>
-			<button onClick={createRoom}>
-				Create room
-			</button>
+			<div>
+				<h4> - Rooms - </h4>
+				<form action={joinRoom}>
+					<input name="roomID"/>
+					<button type="submit"> Join </button>
+				</form>
+				<button onClick={createRoom}>
+					Create room
+				</button>
+			</div>
 		</div>
 	);
 }

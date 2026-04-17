@@ -10,8 +10,6 @@ export default function Room() {
 	const navigate = useNavigate();
 	const {room, setRoom} = useRoom();
 
-	// const [playerDiv, setPlayerDiv] = useState(<></>);
-
 	useEffect(() => {
 		send({type: "JOIN_ROOM", roomID: roomID});
 

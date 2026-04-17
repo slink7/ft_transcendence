@@ -1,18 +1,11 @@
 
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useRef, useEffect } from "react"
 
-import { useLocalStorage } from "./hooks/useLocalStorage.ts";
-
-import Game from "./pages/Game.tsx"
-import Home from "./pages/Home.tsx"
-import Room from "./pages/Room.tsx"
-import FieldSetter from "./components/FieldSetter.tsx";
-
-import { CONFIG } from "./config.ts";
-
-import { createName } from "./scripts/createName.ts";
 import { connectSocket, subscribe, send } from "./components/socket.ts"
+import Header from "./components/Header.tsx";
+import Router from "./components/Router.tsx";
+import Footer from "./components/Footer.tsx";
+
 
 import { useClient, useClientState, useRoom } from "./store.ts";
 
@@ -23,13 +16,6 @@ type ServerMessage = {
 
 export default function App() {
 	const {client, setClient} = useClient();
-	const {state, setState} = useClientState();
-	const {room, setRoom} = useRoom();
-
-	// function setUsername(name: string) {
-	// 	setClient({name: name});
-	// 	send({ type: "SET_NAME", name: name });
-	// }
 
 	useEffect(() => {
 		connectSocket({type: "HELLO", clientID: client.id});
@@ -43,33 +29,15 @@ export default function App() {
 
 	useEffect(() => {
 		return (subscribe((msg: ServerMessage) => {
-			// setClient((prev) => {
-			// 	if (prev.id === msg.clientID) return prev;
-			// 	return { ...prev, id: msg.clientID };
-			// });
 			setClient({id: msg.clientID});
 		}, "WELCOME"));
 	}, []);
 
 	return (
 		<div>
-			<header>
-				<p> Wextranscendence </p>
-				<p> Current name: {client.name} </p>
-				<p> UUID: {client.id} </p>
-				<button onClick={() => { localStorage.clear(); }}> Reset local storage </button>
-				<button onClick={() => { send({type: "STUFF"}) }}> Send stuff </button>
-				<button onClick={() => { send({type: "HELLO", clientID: client.id}) }}> Log in </button>
-			</header>
-			<BrowserRouter>
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/room/:roomID" element={<Room />} />
-					<Route path="/game" element={<Game />} />
-					<Route path="*" element={<Navigate to="/"/>} />
-				</Routes>
-			</BrowserRouter>
-			<footer> footer - 2026 </footer>
+			<Header />
+			<Router />
+			<Footer />
 		</div>
 	);
 }
