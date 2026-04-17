@@ -13,9 +13,8 @@ import { CONFIG } from "./config.ts";
 
 import { createName } from "./scripts/createName.ts";
 import { connectSocket, subscribe, send } from "./components/socket.ts"
-// import { ServerMessage } from "/app/shared/src/types.ts";
 
-import { useClient, useState, useRoom } from "./store.ts";
+import { useClient, useClientState, useRoom } from "./store.ts";
 
 type ServerMessage = {
   type: string;
@@ -23,11 +22,8 @@ type ServerMessage = {
 };
 
 export default function App() {
-	// const [username, setUsername0] = useLocalStorage("username", createName());
-	// const [UUID, setUUID] = useLocalStorage("UUID", "");
-
 	const {client, setClient} = useClient();
-	const {state, setState} = useState();
+	const {state, setState} = useClientState();
 	const {room, setRoom} = useRoom();
 
 	function setUsername(name: string) {
@@ -35,9 +31,8 @@ export default function App() {
 	}
 
 	useEffect(() => {
-		connectSocket();
+		connectSocket({type: "HELLO", clientID: client.id});
 
-		send({type: "HELLO", clientID: client.id});
 		console.log("UUID: ", client.id);
 
 		return (subscribe((msg: ServerMessage) => {
@@ -47,10 +42,11 @@ export default function App() {
 
 	useEffect(() => {
 		return (subscribe((msg: ServerMessage) => {
-			if (msg.type === "WELCOME")
-				// setUUID(msg.clientID);
-				// useStore.getState().setClient({id: msg.clientID});
-				setClient({id: msg.clientID});
+			// setClient((prev) => {
+			// 	if (prev.id === msg.clientID) return prev;
+			// 	return { ...prev, id: msg.clientID };
+			// });
+			setClient({id: msg.clientID});
 		}, "WELCOME"));
 	}, []);
 

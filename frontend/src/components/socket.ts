@@ -20,9 +20,9 @@ let socket: WebSocket | null = null;
 
 const listeners: Set<Listeners> = new Set();
 
-let queue: any[] = [];
+let queue: ClientMessage[] = [];
 
-export function connectSocket(): WebSocket {
+export function connectSocket(greeting: ClientMessage): WebSocket {
 	if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
 		console.log("Socket already connected");
 		return (socket);
@@ -30,6 +30,7 @@ export function connectSocket(): WebSocket {
 
 	const ws = new WebSocket(CONFIG.WS_URL);
 	socket = ws;
+	queue.push(greeting);
 
 	ws.onopen = () => {
 		console.log("Socket successfully connected to ", CONFIG.WS_URL);

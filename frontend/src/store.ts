@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware"
+import { useShallow } from "zustand/shallow"
 
 type Client = {
 	id: string | null;
@@ -63,28 +64,28 @@ export const useStore = create<Store>()(
 );
 
 export function useClient() {
-	return (useStore(
+	return (useStore(useShallow(
 		(s) => ({
 			client: s.client,
 			setClient: s.setClient
-		})
+		}))
 	));
 }
 
 export function useRoom() {
-	return (useStore(
+	return (useStore(useShallow(
 		(s) => ({
 			room: s.room,
 			setRoom: s.setRoom
-		})
+		}))
 	));
 }
 
-export function useState() {
-	return (useStore(
+export function useClientState() {
+	return (useStore(useShallow(
 		(s) => ({
 			state: s.state,
 			setState: s.setState
-		})
+		}))
 	));
 }
