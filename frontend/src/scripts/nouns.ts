@@ -1525,5 +1525,6 @@ export const nouns: string[] = [
 	"tomorrow",
 	"wake",
 	"wrap",
-	"yesterday"
+	"yesterday",
+	"zigzag"
 ]

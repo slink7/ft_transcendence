@@ -1,29 +1,36 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-import { useState } from "react"
+import { subscribe, send } from "../components/socket.ts";
 
 export default function Home() {
 	const navigate = useNavigate();
+	const [roomID, setRoomID] = useState<string | null>(null);
 
 	function navToRoom(ID: string) {
 		navigate(`/room/${ID}`);
 	}
 
 	const createRoom = () => {
-		const fakeID = Math.random().toString(36).substring(7);
-
-		navToRoom(fakeID);
+		send({type: "CREATE_ROOM"});
 	};
 
-	const joinRoom = (formData) => {
+	const joinRoom = (formData: FormData) => {
 		const ID = formData.get("roomID");
 
 		navToRoom(ID);
 	}
 
-	const [clicks, setClicks] = useState(0);
+	useEffect(() => {
+		return (subscribe((msg: ServerMessage) => {
+			setRoomID(msg.roomID);
+		}, "CREATED_ROOM"));
+	}, []);
 
-	const clickplus = () => { clicks++; };
+	useEffect(() => {
+		if (roomID)
+			navToRoom(roomID);
+	}, [roomID]);
 
 	return (
 		<div>
@@ -36,7 +43,6 @@ export default function Home() {
 			<button onClick={createRoom}>
 				Create room
 			</button>
-			<button onClick={setClicks}> You clicked {clicks} times </button>
 		</div>
 	);
 }

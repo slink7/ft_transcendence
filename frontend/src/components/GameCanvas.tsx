@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { GAME_CONFIG } from "/app/shared/config/game.ts"
 import { CONFIG } from "../config.ts";
-import { createSocket } from "./useSocket";
 import { ClientGame } from "./ClientGame.ts"
 import { draw } from "./Draw.ts"
+// import { getSocket } from "./Socket.ts";
 
 type Cell = number;
 
@@ -32,13 +32,13 @@ export default function GameCanvas() {
 	useEffect(() => {
 		if (socketRef.current) return;
 
-		socketRef.current = createSocket((msg: any) => {
-			if (msg.type === "STATE") {
-				clientGameRef.current.applyServerState(msg.state);
-			} else if (msg.type === "ACK") {
-				clientGameRef.current.confirmInput();
-			}
-		});
+		// socketRef.current = getSocket()createSocket((msg: any) => {
+		// 	if (msg.type === "STATE") {
+		// 		clientGameRef.current.applyServerState(msg.state);
+		// 	} else if (msg.type === "ACK") {
+		// 		clientGameRef.current.confirmInput();
+		// 	}
+		// });
 
 		return () => {
 			socketRef.current?.close();
