@@ -38,7 +38,7 @@ export function createWebSocketServer(server: any) {
 				console.error("Invalid message from ", UUID);
 				send(ws, invalidJSON);
 			}
-			
+
 			if (!msg) {
 				console.log("Zebi msg est undefined");
 				return ;
@@ -73,7 +73,12 @@ export function createWebSocketServer(server: any) {
 
 			if (msg.type === "SET_NAME") {
 				client.name = msg.name;
-				return (send(ws, { type: "ACK" }));
+				return (send(ws, {type: "ACK"}));
+			}
+
+			if (msg.type === "SET_COLOR") {
+				client.color = msg.color;
+				return (send(ws, {type: "ACK"}))
 			}
 
 			if (msg.type === "CREATE_ROOM") {
@@ -98,7 +103,7 @@ export function createWebSocketServer(server: any) {
 					const cli = clientManager.getClient(client)
 					if (!cli)
 						return ;
-					return (cli.name);
+					return ({name: cli.name, color: cli.color});
 				});
 				room.clients.forEach((id) => {
 					const cli = clientManager.getClient(id);
@@ -125,7 +130,7 @@ export function createWebSocketServer(server: any) {
 					const cli = clientManager.getClient(client)
 					if (!cli)
 						return ;
-					return (cli.name);
+					return ({name: cli.name, color: cli.color});
 				});
 				console.log("Players: ", clients);
 				room.clients.forEach((id) => {

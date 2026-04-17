@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import { subscribe, send } from "../components/socket.ts";
+import NameTag from "../components/NameTag.tsx";
 
 import { useRoom } from "../store.ts";
 
@@ -38,13 +39,12 @@ export default function Room() {
 					Copy
 				</button>
 			</p>
-			<ul>
+			<h5> Players: </h5>
 				{
 					room.clients.map((client, i) => (
-						<li key={i}> e: {client} </li>
+						<NameTag client={client} as="h3"/>
 					))
 				}
-			</ul>
 			<button onClick={() => navigate("/game")}>
 				Start Game
 			</button>

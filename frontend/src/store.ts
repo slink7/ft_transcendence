@@ -7,6 +7,7 @@ import { createName } from "./scripts/createName.ts";
 type Client = {
 	id: string | null;
 	name: string;
+	color: string;
 };
 
 type Room = {
@@ -35,6 +36,7 @@ export const useStore = create<Store>()(
 		client: {
 			id: null,
 			name: createName(),
+			color: "#7F0000"
 		},
 
 		setClient: (client) =>

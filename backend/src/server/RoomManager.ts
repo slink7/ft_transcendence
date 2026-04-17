@@ -1,6 +1,8 @@
-import { randomUUID } from "crypto";
-
 import { ClientManager } from "./ClientManager"
+
+function randomID() {
+	return (Math.random().toString(16).slice(2, 10).toUpperCase());
+}
 
 export type Room = {
 	UUID:		string;
@@ -17,7 +19,7 @@ export class RoomManager {
 	// }
 
 	createRoom(ownerID: string): string {
-		const UUID = randomUUID();
+		const UUID = randomID();
 
 		const room: Room = {
 			UUID: UUID,

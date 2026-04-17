@@ -21,6 +21,7 @@ export default function App() {
 		connectSocket({type: "HELLO", clientID: client.id});
 
 		send({ type: "SET_NAME", name: client.name });
+		send({ type: "SET_COLOR", color: client.color});
 
 		return (subscribe((msg: ServerMessage) => {
 			console.log("Received:", JSON.stringify(msg));

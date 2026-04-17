@@ -6,6 +6,7 @@ export type ClientState = "HOME" | "ROOM" | "GAME";
 export type Client = {
 	UUID: string;
 	name: string;
+	color: string;
 	socket: WebSocket;
 	connected: boolean;
 	state: ClientState;

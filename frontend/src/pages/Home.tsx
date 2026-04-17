@@ -7,6 +7,8 @@ import { useClient } from "../store.ts";
 import { createName } from "../scripts/createName.ts";
 
 import NameSetter from "../components/NameSetter.tsx";
+import ColorSetter from "../components/ColorSetter.tsx";
+import NameTag from "../components/NameTag.tsx";
 
 export default function Home() {
 	const navigate = useNavigate();
@@ -41,10 +43,13 @@ export default function Home() {
 	return (
 		<div>
 			<h2> Home </h2>
-			<h3> Welcome {client.name} </h3>
+			<h3> Welcome <NameTag client={client} /></h3>
 			<div>
 				<h4> - Customisation - </h4>
 				<NameSetter />
+				<div>-</div>
+				<ColorSetter />
+				<button onClick={() => localStorage.clear()}> Clear localStorage </button>
 			</div>
 			<div>
 				<h4> - Rooms - </h4>

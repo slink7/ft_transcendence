@@ -15,18 +15,21 @@ export default function NameSetter() {
 
 	return (
 		<>
-			<button onClick={() => setInput(createName())}>
+			<button onClick={() => {
+				setInput(createName())
+			}}>
 				Generate Random Name
 			</button>
+
 			<form onSubmit={(event) => {
 				event.preventDefault();
 				setName(input);
 			}}>
 				<input
 					value={input}
+					onChange={(e) => setInput(e.target.value)}
 					placeholder="username"
 					name="username"
-					onChange={(e) => setInput(e.target.value)}
 				/>
 				<button type="submit"> Set </button>
 			</form>
