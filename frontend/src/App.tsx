@@ -28,11 +28,13 @@ export default function App() {
 
 	function setUsername(name: string) {
 		setClient({name: name});
+		send({ type: "SET_NAME", name: name });
 	}
 
 	useEffect(() => {
 		connectSocket({type: "HELLO", clientID: client.id});
 
+		send({ type: "SET_NAME", name: client.name });
 		console.log("UUID: ", client.id);
 
 		return (subscribe((msg: ServerMessage) => {

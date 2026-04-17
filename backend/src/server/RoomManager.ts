@@ -44,7 +44,7 @@ export class RoomManager {
 		if (!room)
 			return (false);
 		room.clients = room.clients.filter((client) => {
-			return (client === clientID);
+			return (client !== clientID);
 		});
 		return (true);
 	}

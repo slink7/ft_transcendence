@@ -38,6 +38,11 @@ export function createWebSocketServer(server: any) {
 				console.error("Invalid message from ", UUID);
 				send(ws, invalidJSON);
 			}
+			
+			if (!msg) {
+				console.log("Zebi msg est undefined");
+				return ;
+			}
 
 			if (!msg.type) {
 				send(ws, invalidJSON);
@@ -45,7 +50,6 @@ export function createWebSocketServer(server: any) {
 			}
 
 			console.log("Received: type ", msg.type);
-			console.log("Received: ", msg);
 
 			if (msg.type === "HELLO") {
 				const client = clientManager.connect(
@@ -67,6 +71,11 @@ export function createWebSocketServer(server: any) {
 			if (msg.type === "GAME_INPUT")
 				return ;
 
+			if (msg.type === "SET_NAME") {
+				client.name = msg.name;
+				return (send(ws, { type: "ACK" }));
+			}
+
 			if (msg.type === "CREATE_ROOM") {
 				const roomID = roomManager.createRoom(UUID);
 
@@ -81,17 +90,52 @@ export function createWebSocketServer(server: any) {
 				const success: boolean = roomManager.joinRoom(UUID, roomID);
 				if (!success)
 					return (send(ws, cantJoin));
+				client.roomID = roomID;
 				const room = roomManager.getRoom(roomID);
-				console.log("OnJoin:", room);
-				//TODO SEND ROOM_INFO
-				return (send(ws, { type: "ROOM_INFO", players: [] }));
+				if (!room)
+					return ;
+				const clients = room.clients.map((client) => {
+					const cli = clientManager.getClient(client)
+					if (!cli)
+						return ;
+					return (cli.name);
+				});
+				room.clients.forEach((id) => {
+					const cli = clientManager.getClient(id);
+					if (!cli)
+						return ;
+					send(cli.socket, { type: "ROOM_INFO", players: clients});
+				});
+				// return (send(ws, { type: "ROOM_INFO", players: clients}));
+				return ;
 			}
 
 			if (msg.type === "QUIT_ROOM") {
-				const success: boolean = roomManager.quitRoom(UUID, clientManager.getClient(UUID)?.roomID || "");
+				const roomID = clientManager.getClient(UUID)?.roomID || "";
+				console.log("Quitting ", roomID);
+				const success: boolean = roomManager.quitRoom(UUID, roomID);
 				if (!success)
 					return (send(ws, cantQuit));
-				// TODO
+				const room = roomManager.getRoom(roomID);
+				if (!room) {
+					console.log("Quit no room");
+					return ;
+				}
+				const clients = room.clients.map((client) => {
+					const cli = clientManager.getClient(client)
+					if (!cli)
+						return ;
+					return (cli.name);
+				});
+				console.log("Players: ", clients);
+				room.clients.forEach((id) => {
+					const cli = clientManager.getClient(id);
+					if (!cli)
+						return ;
+					console.log("Send to ", cli.name);
+					send(cli.socket, { type: "ROOM_INFO", players: clients});
+				});
+				return (send(ws, { type: "ACK" }));
 			}
 
 			send(ws, { type: "UNKNOWN", value: msg.type });
