@@ -30,12 +30,20 @@ export default function Room() {
 	return (
 		<div>
 			<h1> Room </h1>
-			<p> Room ID: {roomID} </p>
-			<p> {room.clients} </p>
+			<p>
+				Room ID: {roomID}
+				<button onClick={() => {
+					navigator.clipboard.writeText(roomID || "");
+				}}>
+					Copy
+				</button>
+			</p>
 			<ul>
-				{ room.clients.map((client, i) => (
-					<li key={i}> e: {client} </li>
-				)) }
+				{
+					room.clients.map((client, i) => (
+						<li key={i}> e: {client} </li>
+					))
+				}
 			</ul>
 			<button onClick={() => navigate("/game")}>
 				Start Game
