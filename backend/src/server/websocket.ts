@@ -42,17 +42,12 @@ export function createWebSocketServer(server: any) {
 		let UUID: string | null = null;
 
 		ws.on("message", (data) => {
-			let msg: ServerMessage;
+			let msg: ClientMessage;
 			try {
 				msg = JSON.parse(data.toString()) as ClientMessage;
 			} catch (err) {
 				console.error("Invalid message from ", UUID);
-				send(ws, invalidJSON);
-			}
-
-			if (!msg) {
-				console.log("Zebi msg est undefined");
-				return ;
+				return (send(ws, invalidJSON));
 			}
 
 			if (!msg.type) {
