@@ -51,6 +51,10 @@ export class RoomManager {
 		return (true);
 	}
 
+	deleteRoom(roomID: string) {
+		return (this._rooms.delete(roomID));
+	}
+
 	getRoom(roomID: string) {
 		return (this._rooms.get(roomID));
 	}

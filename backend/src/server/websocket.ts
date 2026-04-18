@@ -163,6 +163,8 @@ export function createWebSocketServer(server: any) {
 					console.log("Send to ", cli.name);
 					send(cli.socket, { type: "ROOM_INFO", players: clients});
 				});
+				if (room.clients.length < 1)
+					roomManager.deleteRoom(roomID);
 				return (send(ws, { type: "ACK" }));
 			}
 
