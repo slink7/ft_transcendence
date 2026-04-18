@@ -125,3 +125,17 @@ code {
   padding: 20px;
   border-radius: 50%;
 }
+
+@keyframes helicopter {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+h1:hover {
+	color:blue;
+	animation:helicopter 0.1s infinite linear;
+}
