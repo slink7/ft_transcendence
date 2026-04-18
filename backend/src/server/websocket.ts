@@ -3,7 +3,7 @@ import { WebSocketServer, WebSocket } from "ws";
 import { ClientMessage, ServerMessage } from "../../shared/src/types";
 
 import { ClientManager } from "./ClientManager";
-import { RoomManager } from "./RoomManager";
+import { Room, RoomManager } from "./RoomManager";
 
 function createError(msg: string) {
 	return ({ type: "ERROR", message: msg });
@@ -17,6 +17,17 @@ const cantQuit = createError("Cant quit room");
 
 function send(ws: WebSocket, msg: ServerMessage) {
 	return (ws.send(JSON.stringify(msg)));
+}
+
+type Client = {
+	name: string;
+	color: string;
+}
+
+type SimpleRoom = {
+	owner: Client;
+	id: string,
+	clientCount: number
 }
 
 export function createWebSocketServer(server: any) {
@@ -79,6 +90,18 @@ export function createWebSocketServer(server: any) {
 			if (msg.type === "SET_COLOR") {
 				client.color = msg.color;
 				return (send(ws, {type: "ACK"}))
+			}
+
+			console.log(msg.type === "GET_ROOMS");
+			if (msg.type === "GET_ROOMS") {
+				let rooms: SimpleRoom[] = [];
+				roomManager.getRooms().forEach((room, _) => {
+					const cli = clientManager.getClient(room.owner);
+					if (!cli)
+						return ;
+					rooms.push({owner: {name: cli.name, color: cli.color}, id: room.UUID, clientCount: room.clients.length});
+				});
+				return (send(ws, {type: "ROOM_LIST", roomList: rooms}));
 			}
 
 			if (msg.type === "CREATE_ROOM") {

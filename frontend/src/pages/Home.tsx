@@ -10,10 +10,23 @@ import NameSetter from "../components/NameSetter.tsx";
 import ColorSetter from "../components/ColorSetter.tsx";
 import NameTag from "../components/NameTag.tsx";
 
+
+type Client = {
+	name: string;
+	color: string;
+}
+
+type Room = {
+	owner: Client;
+	id: string;
+	clientCount: number;
+}
+
 export default function Home() {
 	const navigate = useNavigate();
 	const [roomID, setRoomID] = useState<string | null>(null);
 	const { client, setClient } = useClient();
+	const [roomList, setRoomList] = useState<Room[]>([]);
 
 	function navToRoom(ID: string) {
 		navigate(`/room/${ID}`);
@@ -27,7 +40,7 @@ export default function Home() {
 		const ID = formData.get("roomID") || "";
 
 		navToRoom(ID);
-	}
+	};
 
 	useEffect(() => {
 		return (subscribe((msg: ServerMessage) => {
@@ -39,6 +52,17 @@ export default function Home() {
 		if (roomID)
 			navToRoom(roomID);
 	}, [roomID]);
+
+	function askForRoomList() {
+		send({type: "GET_ROOMS"});
+	}
+
+	useEffect(() => {
+		askForRoomList();
+		return (subscribe((msg: ServerMessage) => {
+			setRoomList(msg.roomList);
+		}, "ROOM_LIST"));
+	}, []);
 
 	return (
 		<div>
@@ -60,6 +84,17 @@ export default function Home() {
 				<button onClick={createRoom}>
 					Create room
 				</button>
+				<h5> - Room list - </h5>
+				{
+					roomList?.map((room: Room) => {
+						return (<div><a onClick={() => {
+							navToRoom(room.id);
+						}}> <NameTag client={room.owner} />'s room ({room.clientCount})</a></div>);
+					})
+				}
+				<button onClick={() => {
+					askForRoomList();
+				}}> Refresh </button>
 			</div>
 		</div>
 	);

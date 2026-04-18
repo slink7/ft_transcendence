@@ -54,4 +54,8 @@ export class RoomManager {
 	getRoom(roomID: string) {
 		return (this._rooms.get(roomID));
 	}
+
+	getRooms() {
+		return (this._rooms);
+	}
 }
