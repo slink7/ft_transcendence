@@ -49,10 +49,15 @@ export default function Room() {
 				Start Game
 			</button>
 			<button onClick={() => {
-				send({ type: "QUIT_ROOM" });
 				navigate("/")
 			}}>
 				Back to Home
+			</button>
+			<button onClick={() => {
+				send({ type: "QUIT_ROOM" });
+				navigate("/")
+			}}>
+				Quit room
 			</button>
 		</div>
 

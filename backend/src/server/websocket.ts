@@ -36,6 +36,26 @@ export function createWebSocketServer(server: any) {
 	const clientManager = new ClientManager();
 	const roomManager = new RoomManager();
 
+	function broadcastRoomInfo(roomID: string) {
+		const room = roomManager.getRoom(roomID);
+		if (!room)
+			return ;
+		const clients = room.clients.map((client) => {
+			const cli = clientManager.getClient(client)
+			if (!cli)
+				return ;
+			return ({name: cli.name, color: cli.color});
+		});
+		room.clients.forEach((id) => {
+			const cli = clientManager.getClient(id);
+			if (!cli)
+				return ;
+			console.log("=== SENT ROOM_INFO ===", clients);
+			send(cli.socket, { type: "ROOM_INFO", players: clients});
+		});
+	}
+
+
 	wss.on("connection", (ws: WebSocket) => {
 
 		console.log("WebSocket connection...");
@@ -87,7 +107,6 @@ export function createWebSocketServer(server: any) {
 				return (send(ws, {type: "ACK"}))
 			}
 
-			console.log(msg.type === "GET_ROOMS");
 			if (msg.type === "GET_ROOMS") {
 				let rooms: SimpleRoom[] = [];
 				roomManager.getRooms().forEach((room, _) => {
@@ -110,54 +129,31 @@ export function createWebSocketServer(server: any) {
 				if (!roomID)
 					return (send(ws, missingParameter));
 
+				if (client.roomID && client.roomID !== roomID) {
+					const success = roomManager.quitRoom(UUID, client.roomID);
+					if (success)
+						broadcastRoomInfo(client.roomID);
+					const room = roomManager.getRoom(client.roomID);
+					if (room && room.clients.length < 1)
+						roomManager.deleteRoom(client.roomID);
+				}
 				const success: boolean = roomManager.joinRoom(UUID, roomID);
 				if (!success)
 					return (send(ws, cantJoin));
 				client.roomID = roomID;
-				const room = roomManager.getRoom(roomID);
-				if (!room)
-					return ;
-				const clients = room.clients.map((client) => {
-					const cli = clientManager.getClient(client)
-					if (!cli)
-						return ;
-					return ({name: cli.name, color: cli.color});
-				});
-				room.clients.forEach((id) => {
-					const cli = clientManager.getClient(id);
-					if (!cli)
-						return ;
-					send(cli.socket, { type: "ROOM_INFO", players: clients});
-				});
-				// return (send(ws, { type: "ROOM_INFO", players: clients}));
+				broadcastRoomInfo(roomID);
 				return ;
 			}
 
 			if (msg.type === "QUIT_ROOM") {
 				const roomID = clientManager.getClient(UUID)?.roomID || "";
-				console.log("Quitting ", roomID);
 				const success: boolean = roomManager.quitRoom(UUID, roomID);
 				if (!success)
 					return (send(ws, cantQuit));
 				const room = roomManager.getRoom(roomID);
-				if (!room) {
-					console.log("Quit no room");
-					return ;
-				}
-				const clients = room.clients.map((client) => {
-					const cli = clientManager.getClient(client)
-					if (!cli)
-						return ;
-					return ({name: cli.name, color: cli.color});
-				});
-				console.log("Players: ", clients);
-				room.clients.forEach((id) => {
-					const cli = clientManager.getClient(id);
-					if (!cli)
-						return ;
-					console.log("Send to ", cli.name);
-					send(cli.socket, { type: "ROOM_INFO", players: clients});
-				});
+				if (!room)
+					return (send(ws, cantQuit));
+				broadcastRoomInfo(roomID);
 				if (room.clients.length < 1)
 					roomManager.deleteRoom(roomID);
 				return (send(ws, { type: "ACK" }));
