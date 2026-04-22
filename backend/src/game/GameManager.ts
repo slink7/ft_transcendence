@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { Game } from "/app/shared/src/game/Game.ts";
+import { Game } from "/app/shared/game/Game.ts";
 
 type Player = {
 	id: string;

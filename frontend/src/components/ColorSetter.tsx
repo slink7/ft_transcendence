@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { useClient } from "../store.ts";
+import { useClient } from "../scripts/store.ts";
 
-import { send } from "./socket.ts"
+import { send } from "../scripts/socket.ts"
 
 export default function ColorSetter() {
 	const {client, setClient} = useClient();

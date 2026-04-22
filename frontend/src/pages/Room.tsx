@@ -1,10 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { subscribe, send } from "../components/socket.ts";
+import { subscribe, send } from "../scripts/socket.ts";
 import NameTag from "../components/NameTag.tsx";
 
-import { useRoom } from "../store.ts";
+import { useRoom } from "../scripts/store.ts";
 
 export default function Room() {
 	const { roomID } = useParams();

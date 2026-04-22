@@ -1,5 +1,5 @@
 
-import { Game } from "/app/shared/src/game/Game.ts";
+import { Game } from "/app/shared/game/Game.ts";
 
 export class ClientGame {
   game: Game;

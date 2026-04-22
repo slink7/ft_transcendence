@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { useClient } from "../store.ts";
+import { useClient } from "../scripts/store.ts";
 import { createName } from "../scripts/createName.ts"
-import { send } from "../components/socket.ts"
+import { send } from "../scripts/socket.ts"
 
 export default function NameSetter() {
 	const { client, setClient } = useClient();

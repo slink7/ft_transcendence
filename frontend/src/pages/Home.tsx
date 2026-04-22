@@ -1,10 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { subscribe, send } from "../components/socket.ts";
+import { subscribe, send } from "../scripts/socket.ts";
 
-import { useClient } from "../store.ts";
-import { createName } from "../scripts/createName.ts";
+import { useClient } from "../scripts/store.ts";
 
 import NameSetter from "../components/NameSetter.tsx";
 import ColorSetter from "../components/ColorSetter.tsx";

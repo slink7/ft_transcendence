@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware"
 import { useShallow } from "zustand/shallow"
 
-import { createName } from "./scripts/createName.ts";
+import { createName } from "./createName.ts";
 
 type Client = {
 	id: string | null;

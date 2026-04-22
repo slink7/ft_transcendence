@@ -1,13 +1,13 @@
 
 import { useRef, useEffect } from "react"
 
-import { connectSocket, subscribe, send } from "./components/socket.ts"
 import Header from "./components/Header.tsx";
 import Router from "./components/Router.tsx";
 import Footer from "./components/Footer.tsx";
 
 
-import { useClient, useClientState, useRoom } from "./store.ts";
+import { connectSocket, subscribe, send } from "./scripts/socket.ts"
+import { useClient, useClientState, useRoom } from "./scripts/store.ts";
 
 type ServerMessage = {
   type: string;
