@@ -41,8 +41,8 @@ export default function Room() {
 			</p>
 			<h5> Players: </h5>
 				{
-					room.clients.map((client, i) => (
-						<NameTag client={client} as="h3"/>
+					room.clients.map((client, k) => (
+						<NameTag key={k} client={client} as="h3"/>
 					))
 				}
 			<button onClick={() => navigate("/game")}>
@@ -60,6 +60,5 @@ export default function Room() {
 				Quit room
 			</button>
 		</div>
-
 	);
 }

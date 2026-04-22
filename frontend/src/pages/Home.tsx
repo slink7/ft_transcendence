@@ -85,8 +85,8 @@ export default function Home() {
 				</button>
 				<h5> - Room list - </h5>
 				{
-					roomList?.map((room: Room) => {
-						return (<div><a onClick={() => {
+					roomList?.map((room: Room, k) => {
+						return (<div key={k}><a onClick={() => {
 							navToRoom(room.id);
 						}}> <NameTag client={room.owner} />'s room ({room.clientCount})</a></div>);
 					})
