@@ -79,9 +79,9 @@ export function createWebSocketServer(server: any) {
 	wss.on("connection", (ws: WebSocket) => {
 
 		console.log("WebSocket connection...");
+		let UUID: string | null = null;
 
 		ws.on("message", (data) => {
-			let UUID: string | null = null;
 			let msg: ClientMessage;
 			try {
 				msg = JSON.parse(data.toString()) as ClientMessage;
