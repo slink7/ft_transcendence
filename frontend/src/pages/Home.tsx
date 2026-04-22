@@ -8,6 +8,7 @@ import { useClient } from "../scripts/store.ts";
 import NameSetter from "../components/NameSetter.tsx";
 import ColorSetter from "../components/ColorSetter.tsx";
 import NameTag from "../components/NameTag.tsx";
+import RoomTag from "../components/RoomTag.tsx";
 
 
 type Client = {
@@ -86,9 +87,15 @@ export default function Home() {
 				<h5> - Room list - </h5>
 				{
 					roomList?.map((room: Room, k) => {
-						return (<div key={k}><a onClick={() => {
-							navToRoom(room.id);
-						}}> <NameTag client={room.owner} />'s room ({room.clientCount})</a></div>);
+						return (
+							<div key={k}>
+								<a onClick={() => {
+									navToRoom(room.id);
+								}}>
+									<RoomTag room={room} as="div" clientCount/>
+								</a>
+							</div>
+						);
 					})
 				}
 				<button onClick={() => {

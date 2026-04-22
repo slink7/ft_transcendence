@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 
 import { subscribe, send } from "../scripts/socket.ts";
 import NameTag from "../components/NameTag.tsx";
+import RoomTag from "../components/RoomTag.tsx";
+
+// import type { ServerMessage } from "../../../shared/types.ts";
 
 import { useRoom } from "../scripts/store.ts";
 
@@ -19,7 +22,7 @@ export default function Room() {
 		}, "ERROR");
 
 		const unsubAck = subscribe((msg: ServerMessage) => {
-			setRoom({ clients: msg.players });
+			setRoom({ clients: msg.clients, owner: msg.owner, id: msg.id});
 		}, "ROOM_INFO");
 
 		return (() => {
@@ -30,9 +33,9 @@ export default function Room() {
 
 	return (
 		<div>
-			<h1> Room </h1>
+			<RoomTag room={room} as="h2"/>
 			<p>
-				Room ID: {roomID}
+				<span> Room ID: {roomID} </span>
 				<button onClick={() => {
 					navigator.clipboard.writeText(roomID || "");
 				}}>
@@ -41,7 +44,7 @@ export default function Room() {
 			</p>
 			<h5> Players: </h5>
 				{
-					room.clients.map((client, k) => (
+					room && room.clients.map((client, k) => (
 						<NameTag key={k} client={client} as="h3"/>
 					))
 				}

@@ -13,6 +13,7 @@ type Client = {
 type Room = {
 	id: string | null;
 	clients: string[];
+	owner: Client;
 };
 
 type State = "HOME" | "ROOM" | "GAME";
@@ -47,6 +48,11 @@ export const useStore = create<Store>()(
 		room: {
 			id: null,
 			clients: [],
+			owner: {
+				id: null,
+				name: "Bababooey",
+				color: "#000000"
+			}
 		},
 
 		setRoom: (room) =>

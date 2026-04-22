@@ -61,16 +61,18 @@ export function createWebSocketServer(server: any) {
 		const room = roomManager.getRoom(roomID);
 		if (!room)
 			return ;
-		const clients = room.clients.map((clientID: string) => {
-			return (convertClient(clientManager.getClient(clientID)));
-		});
+		const roomData: CRoom = convertRoom(room);
+		// const clients = room.clients.map((clientID: string) => {
+		// 	return (convertClient(clientManager.getClient(clientID)));
+		// });
+
 		room.clients.forEach((id) => {
 			const cli = clientManager.getClient(id);
 			if (!cli)
 				return ;
 			send(cli.socket, {
 				type: "ROOM_INFO",
-				players: clients
+				...roomData
 			});
 		});
 	}

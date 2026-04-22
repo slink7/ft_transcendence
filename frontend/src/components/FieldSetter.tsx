@@ -1,4 +1,11 @@
 
+/*
+ *
+ *	Ce fichier sert plus a rien, c'etait juste un test
+ *	pour me faire a react
+ *
+**/
+
 export default function FieldSetter({fieldName, setField}: {fieldName: string, setField: (any) => void} ) {
 
 	const setFieldFromInput = (formData: FormData) => {
