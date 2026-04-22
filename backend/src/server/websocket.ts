@@ -2,7 +2,7 @@ import { WebSocketServer, WebSocket } from "ws";
 
 import { ClientMessage, ServerMessage } from "../../shared/src/types";
 
-import { ClientManager } from "./ClientManager";
+import { Client, ClientManager } from "./ClientManager";
 import { Room, RoomManager } from "./RoomManager";
 
 function createError(msg: string) {
@@ -19,16 +19,25 @@ function send(ws: WebSocket, msg: ServerMessage) {
 	return (ws.send(JSON.stringify(msg)));
 }
 
-type Client = {
+type CClient = {
 	name: string;
 	color: string;
 }
 
-type SimpleRoom = {
-	owner: Client;
+type CRoom = {
+	owner: CClient,
 	id: string,
-	clientCount: number
+	clientCount: number,
+	clients: CClient[]
 }
+
+function convertClient(client: Client | undefined): CClient {
+	return ({
+		name: client?.name || "Unknown",
+		color: client?.color || "#000000"
+	});
+}
+
 
 export function createWebSocketServer(server: any) {
 	const wss = new WebSocketServer({ server });
@@ -36,22 +45,33 @@ export function createWebSocketServer(server: any) {
 	const clientManager = new ClientManager();
 	const roomManager = new RoomManager();
 
+	function convertRoom(room: Room): CRoom {
+		const clients: CClient[] = room.clients.map((UUID: string) => {
+			return (convertClient(clientManager.getClient(UUID)));
+		});
+		return ({
+			id: room.UUID,
+			clients: clients,
+			clientCount: clients.length,
+			owner: convertClient(clientManager.getClient(room.owner))
+		});
+	}
+
 	function broadcastRoomInfo(roomID: string) {
 		const room = roomManager.getRoom(roomID);
 		if (!room)
 			return ;
-		const clients = room.clients.map((client) => {
-			const cli = clientManager.getClient(client)
-			if (!cli)
-				return ;
-			return ({name: cli.name, color: cli.color});
+		const clients = room.clients.map((clientID: string) => {
+			return (convertClient(clientManager.getClient(clientID)));
 		});
 		room.clients.forEach((id) => {
 			const cli = clientManager.getClient(id);
 			if (!cli)
 				return ;
-			console.log("=== SENT ROOM_INFO ===", clients);
-			send(cli.socket, { type: "ROOM_INFO", players: clients});
+			send(cli.socket, {
+				type: "ROOM_INFO",
+				players: clients
+			});
 		});
 	}
 
@@ -59,9 +79,9 @@ export function createWebSocketServer(server: any) {
 	wss.on("connection", (ws: WebSocket) => {
 
 		console.log("WebSocket connection...");
-		let UUID: string | null = null;
 
 		ws.on("message", (data) => {
+			let UUID: string | null = null;
 			let msg: ClientMessage;
 			try {
 				msg = JSON.parse(data.toString()) as ClientMessage;
@@ -108,12 +128,9 @@ export function createWebSocketServer(server: any) {
 			}
 
 			if (msg.type === "GET_ROOMS") {
-				let rooms: SimpleRoom[] = [];
+				let rooms: CRoom[] = [];
 				roomManager.getRooms().forEach((room, _) => {
-					const cli = clientManager.getClient(room.owner);
-					if (!cli)
-						return ;
-					rooms.push({owner: {name: cli.name, color: cli.color}, id: room.UUID, clientCount: room.clients.length});
+					rooms.push(convertRoom(room));
 				});
 				return (send(ws, {type: "ROOM_LIST", roomList: rooms}));
 			}

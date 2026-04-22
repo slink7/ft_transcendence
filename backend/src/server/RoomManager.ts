@@ -12,11 +12,6 @@ export type Room = {
 
 export class RoomManager {
 	private _rooms = new Map<string, Room>();
-	// private _clientManager: ClientManager;
-	//
-	// constructor(clientManager: ClientManager) {
-	// 	this._clientManager = clientManager;
-	// }
 
 	createRoom(ownerID: string): string {
 		const UUID = randomID();
