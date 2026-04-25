@@ -4,7 +4,10 @@ import { useClient } from "../scripts/store.ts";
 import { createName } from "../scripts/createName.ts"
 import { send } from "../scripts/socket.ts"
 
+import { useTranslation } from "react-i18next";
+
 export default function NameSetter() {
+	const {t, i18n} = useTranslation();
 	const { client, setClient } = useClient();
 	const [input, setInput] = useState(client.name);
 
@@ -18,7 +21,7 @@ export default function NameSetter() {
 			<button onClick={() => {
 				setInput(createName())
 			}}>
-				Generate Random Name
+				{t('name.generate')}
 			</button>
 
 			<form onSubmit={(event) => {
@@ -31,7 +34,7 @@ export default function NameSetter() {
 					placeholder="username"
 					name="username"
 				/>
-				<button type="submit"> Set </button>
+				<button type="submit"> {t('name.set')} </button>
 			</form>
 		</>
 	);

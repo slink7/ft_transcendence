@@ -1,0 +1,37 @@
+{
+	"header": {
+		"title": " - Wextranscendence - ",
+		"subtitle": "-Wextetris for connoisseurs ;"
+	},
+	"home": {
+		"title": "Home",
+		"welcome": "Welcome",
+		"customization": "Customization",
+		"storage": "Clear localStorage",
+		"room": "Rooms",
+		"join": "Join",
+		"create": "Create a room",
+		"list": "Room list",
+		"refresh": "Refresh"
+	},
+	"name": {
+		"generate": "Generate Random Name",
+		"set": "Set"
+	},
+	"color": {
+		"generate": "Generate Random Color",
+		"set": "Set"
+	},
+	"room": {
+		"id": "Room ID:",
+		"copy": "Copy",
+		"players": "Players",
+		"start": "Start game",
+		"home": "Back to home",
+		"quit": "Quit room"
+	},
+	"game": {
+		"title": "Game",
+		"quit": "Quit"
+	}
+}

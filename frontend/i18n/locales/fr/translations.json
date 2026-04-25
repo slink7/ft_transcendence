@@ -1,0 +1,37 @@
+{
+	"header": {
+		"title": " - Wextranscendence - ",
+		"subtitle": "-Wextetris pour les intimes ;"
+	},
+	"home": {
+		"title": "Menu",
+		"welcome": "Bienvenue", 
+		"customization": "Customisation",
+		"storage": "Tout effacer",
+		"room": "Salles",
+		"join": "Rejoindre",
+		"create": "Créer une salle",
+		"list": "Liste des salles",
+		"refresh": "Recharger"
+	},
+	"name": {
+		"generate": "Générer un nom aléatoire",
+		"set": "Choisir"
+	},
+	"color": {
+		"generate": "Générer une couleur aléatoire",
+		"set": "Choisir"
+	},
+	"room": {
+		"id": "Identifiant de la salle:",
+		"copy": "Copier",
+		"players": "Joueurs",
+		"start": "Commencer le jeu",
+		"home": "Retour au menu",
+		"quit": "Quitter la salle"
+	},
+	"game": {
+		"title": "Jeu",
+		"quit": "Quitter"
+	}
+}

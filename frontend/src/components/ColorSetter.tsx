@@ -4,7 +4,10 @@ import { useClient } from "../scripts/store.ts";
 
 import { send } from "../scripts/socket.ts"
 
+import { useTranslation } from "react-i18next";
+
 export default function ColorSetter() {
+	const {t, i18n} = useTranslation();
 	const {client, setClient} = useClient();
 	const [input, setInput] = useState(client.color);
 
@@ -22,7 +25,7 @@ export default function ColorSetter() {
 			<button onClick={() => {
 				setInput(randomColor());
 			}}>
-				Generate Random Color
+				{t('color.generate')}
 			</button>
 
 			<form onSubmit={(event) => {
@@ -34,7 +37,7 @@ export default function ColorSetter() {
 					onChange={(e) => setInput(e.target.value)}
 					type="color"
 				/>
-				<button type="submit"> Set </button>
+				<button type="submit"> {t('color.set')} </button>
 			</form>
 		</>
 	);

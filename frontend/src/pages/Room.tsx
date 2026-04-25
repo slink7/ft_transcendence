@@ -7,12 +7,15 @@ import RoomTag from "../components/RoomTag.tsx";
 
 // import type { ServerMessage } from "../../../shared/types.ts";
 
+import { useTranslation } from "react-i18next";
+
 import { useRoom } from "../scripts/store.ts";
 
 export default function Room() {
 	const { roomID } = useParams();
 	const navigate = useNavigate();
 	const {room, setRoom} = useRoom();
+	const {t, i18n} = useTranslation();
 
 	useEffect(() => {
 		send({type: "JOIN_ROOM", roomID: roomID});
@@ -35,32 +38,32 @@ export default function Room() {
 		<div>
 			<RoomTag room={room} as="h2"/>
 			<p>
-				<span> Room ID: {roomID} </span>
+				<span> {t('room.id')} {roomID} </span>
 				<button onClick={() => {
 					navigator.clipboard.writeText(roomID || "");
 				}}>
-					Copy
+					{t('room.copy')}
 				</button>
 			</p>
-			<h5> Players: </h5>
+			<h5> {t('room.players')}: </h5>
 				{
 					room && room.clients.map((client, k) => (
 						<NameTag key={k} client={client} as="h3"/>
 					))
 				}
 			<button onClick={() => navigate("/game")}>
-				Start Game
+				{t('room.start')}
 			</button>
 			<button onClick={() => {
 				navigate("/")
 			}}>
-				Back to Home
+				{t('room.home')}
 			</button>
 			<button onClick={() => {
 				send({ type: "QUIT_ROOM" });
 				navigate("/")
 			}}>
-				Quit room
+				{t('room.quit')}
 			</button>
 		</div>
 	);

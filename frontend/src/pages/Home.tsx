@@ -5,6 +5,8 @@ import { subscribe, send } from "../scripts/socket.ts";
 
 import { useClient } from "../scripts/store.ts";
 
+import { useTranslation } from "react-i18next";
+
 import NameSetter from "../components/NameSetter.tsx";
 import ColorSetter from "../components/ColorSetter.tsx";
 import NameTag from "../components/NameTag.tsx";
@@ -23,6 +25,7 @@ type Room = {
 }
 
 export default function Home() {
+	const {t, i18n} = useTranslation();
 	const navigate = useNavigate();
 	const [roomID, setRoomID] = useState<string | null>(null);
 	const { client, setClient } = useClient();
@@ -66,25 +69,25 @@ export default function Home() {
 
 	return (
 		<div>
-			<h2> Home </h2>
-			<h3> Welcome <NameTag client={client} /></h3>
+			<h2>{t('home.title')}</h2>
+			<h3>{t('home.welcome')} <NameTag client={client}/></h3>
 			<div>
-				<h4> - Customisation - </h4>
+				<h4> - {t('home.customization')} - </h4>
 				<NameSetter />
 				<div>-</div>
 				<ColorSetter />
-				<button onClick={() => localStorage.clear()}> Clear localStorage </button>
+				<button onClick={() => localStorage.clear()}> {t('home.storage')} </button>
 			</div>
 			<div>
-				<h4> - Rooms - </h4>
+				<h4> - {t('home.room')} - </h4>
 				<form action={joinRoom}>
 					<input name="roomID"/>
-					<button type="submit"> Join </button>
+					<button type="submit"> {t('home.join')} </button>
 				</form>
 				<button onClick={createRoom}>
-					Create room
+					{t('home.create')}
 				</button>
-				<h5> - Room list - </h5>
+				<h5> - {t('home.list')} - </h5>
 				{
 					roomList?.map((room: Room, k) => {
 						return (
@@ -92,7 +95,8 @@ export default function Home() {
 								<a onClick={() => {
 									navToRoom(room.id);
 								}}>
-									<RoomTag room={room} as="div" clientCount/>
+									<RoomTag room={room} as="div" clientCount/> 
+									{/* modify to room name for easy translation */}
 								</a>
 							</div>
 						);
@@ -100,7 +104,7 @@ export default function Home() {
 				}
 				<button onClick={() => {
 					askForRoomList();
-				}}> Refresh </button>
+				}}> {t('home.refresh')} </button>
 			</div>
 		</div>
 	);
