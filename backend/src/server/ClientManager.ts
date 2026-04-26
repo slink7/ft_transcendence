@@ -16,16 +16,11 @@ export type Client = {
 
 export class ClientManager {
 	private _clients = new Map<string, Client>();
+	private _disconnectTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 	connect(socket: WebSocket, UUID?: string, name?: string): Client {
 		if (UUID && this._clients.has(UUID)) {
-			const client = this._clients.get(UUID)!;
-
-			client.socket = socket;
-			client.connected = true;
-			client.lastSeen = Date.now();
-
-			return (client);
+			return (this.reconnect(UUID, socket)!);
 		}
 
 		UUID = randomUUID();
@@ -33,6 +28,7 @@ export class ClientManager {
 		const client: Client = {
 			UUID: UUID,
 			name: name || "Bababooey",
+			color: "#7F007F",
 			socket: socket,
 			connected: true,
 			state: "HOME",
@@ -44,13 +40,47 @@ export class ClientManager {
 		return (client);
 	}
 
-	disconnect(UUID: string): boolean {
+	reconnect(UUID: string, socket: WebSocket): Client | null {
+		const client = this._clients.get(UUID);
+		if (!client)
+			return (null);
+
+		const timer = this._disconnectTimers.get(UUID);
+		if (timer) {
+			clearTimeout(timer);
+			this._disconnectTimers.delete(UUID);
+		}
+
+		client.socket = socket;
+		client.connected = true;
+		client.lastSeen = Date.now();
+
+		return (client);
+	}
+
+	disconnect(
+		UUID: string,
+		onExpired?: (client: Client) => void,
+		timeout: number = 5000
+	): boolean {
 		const client = this._clients.get(UUID);
 		if (!client)
 			return (false);
 
 		client.connected = false;
 		client.lastSeen = Date.now();
+
+		const previousTimer = this._disconnectTimers.get(UUID);
+		if (previousTimer)
+			clearTimeout(previousTimer);
+
+		if (onExpired) {
+			const timer = setTimeout(() => {
+				this._disconnectTimers.delete(UUID);
+				onExpired(client);
+			}, timeout);
+			this._disconnectTimers.set(UUID, timer);
+		}
 
 		return (true);
 	}
@@ -72,6 +102,11 @@ export class ClientManager {
 				return ;
 			if (now - client.lastSeen <= timeout)
 				return ;
+			const timer = this._disconnectTimers.get(client.UUID);
+			if (timer) {
+				clearTimeout(timer);
+				this._disconnectTimers.delete(client.UUID);
+			}
 			this._clients.delete(client.UUID);
 			removed++;
 		});

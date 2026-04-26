@@ -1,11 +1,11 @@
 import { WebSocketServer, WebSocket } from "ws";
 
-import { ClientMessage, ServerMessage } from "../../shared/src/types";
+import { ClientMessage, ServerMessage } from "../../shared/types";
 
 import { Client, ClientManager } from "./ClientManager";
 import { Room, RoomManager } from "./RoomManager";
 
-function createError(msg: string) {
+function createError(msg: string): ServerMessage {
 	return ({ type: "ERROR", message: msg });
 }
 
@@ -39,7 +39,7 @@ function convertClient(client: Client | undefined): CClient {
 }
 
 
-export function createWebSocketServer(server: any) {
+export function createWebSocketServer(server: any, _gameManager?: unknown) {
 	const wss = new WebSocketServer({ server });
 
 	const clientManager = new ClientManager();
@@ -100,6 +100,14 @@ export function createWebSocketServer(server: any) {
 			console.log("Received: type ", msg.type);
 
 			if (msg.type === "HELLO") {
+				if (msg.clientID) {
+					const client = clientManager.reconnect(msg.clientID, ws);
+					if (client) {
+						UUID = client.UUID;
+						return (send(ws, { type: "WELCOME", clientID: UUID }));
+					}
+				}
+
 				const client = clientManager.connect(
 					ws, msg.clientID, msg.name
 				);
@@ -184,8 +192,26 @@ export function createWebSocketServer(server: any) {
 		});
 
 		ws.on("close", () => {
-			console.log("Client disconnected ", clientManager.getClient(UUID || "")?.name);
-			clientManager.disconnect(UUID || "");
+			if (!UUID)
+				return ;
+			const clientID = UUID;
+
+			const client = clientManager.getClient(clientID);
+			if (!client || client.socket !== ws)
+				return ;
+
+			console.log("Client disconnected ", client.name);
+			clientManager.disconnect(clientID, (expiredClient: Client) => {
+				const roomID = expiredClient.roomID;
+				if (!roomID)
+					return ;
+
+				const success = roomManager.quitRoom(clientID, roomID);
+				if (!success)
+					return ;
+				delete expiredClient.roomID;
+				broadcastRoomInfo(roomID);
+			});
 		});
 	});
 

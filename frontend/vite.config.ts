@@ -14,7 +14,7 @@ export default defineConfig({
 
 		hmr: {
 			host: "localhost",
-			protocal: "ws",
+			protocol: "ws",
 			port: 5173
 		}
 	}
