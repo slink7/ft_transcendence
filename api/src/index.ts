@@ -112,3 +112,19 @@ app.get("/player/:id_player", async (req, res) => {
 
 app.listen(port, serverStart);
 
+// function callbackGet() {
+//     console.log("une fonction get a ete utilisee ");
+// }
+// app.get("/test", async (req, res) => {
+//     callbackGet();
+//     var test = {
+//         name: "jon",
+//         lastname: "le douaron"
+//     }
+//     console.log("test is called ");
+//     res.send(test);
+// });
+// // const express = require('express');
+// // const cors =require('cors');
+// // const app = express();
+// const port = 3000;
