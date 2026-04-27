@@ -1,6 +1,6 @@
 import { CONFIG } from "../config.ts";
 import { GAME_CONFIG } from "/app/shared/config/game.ts"
-import { Game } from "/app/shared/src/game/Game.ts";
+import { Game } from "/app/shared/game/Game.ts";
 
 export const PALETTES: string[][] = [
 	["#00FFFF", "#FFFF00", "#AC00FF", "#FFA700", "#0000FF", "#FF0000", "#00FF00"], //Classique

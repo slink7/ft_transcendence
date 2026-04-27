@@ -1,4 +1,4 @@
-import { GAME_CONFIG } from "../../config/game.ts"
+import { GAME_CONFIG } from "../config/game.ts"
 
 export type Cell = number;
 

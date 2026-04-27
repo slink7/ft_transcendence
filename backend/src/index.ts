@@ -1,7 +1,7 @@
 import { createHTTPServer } from "./server/http";
 import { createWebSocketServer } from "./server/websocket";
 import { GameManager } from "./game/GameManager";
-import { CONFIG } from "./config.ts"
+import { CONFIG } from "./config"
 
 const gameManager = new GameManager();
 
