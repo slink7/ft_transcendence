@@ -4,15 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
-<<<<<<< HEAD
     "dev": "tsx watch src/index.ts",
-=======
-    "dev": "tsx src/index.ts",
->>>>>>> 3e6fdc1 (add:listen server port 3001)
-=======
-    "dev": "tsx src/index.ts",
->>>>>>> 3e6fdc1 (add:listen server port 3001)
     "build": "tsc",
     "start": "node dist/index.js"
   },
@@ -22,30 +14,14 @@
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.0",
-<<<<<<< HEAD
-<<<<<<< HEAD
     "@types/pg": "^8.20.0",
     "ts-node-dev": "^2.0.0",
-=======
-    "ts-node": "^10.9.2",
->>>>>>> 3e6fdc1 (add:listen server port 3001)
-=======
-    "ts-node": "^10.9.2",
->>>>>>> 3e6fdc1 (add:listen server port 3001)
     "tsx": "^4.21.0",
     "typescript": "^6.0.3"
   },
   "dependencies": {
-<<<<<<< HEAD
-<<<<<<< HEAD
     "express": "^5.2.1",
     "pg": "^8.20.0"
-=======
-    "express": "^5.2.1"
->>>>>>> 3e6fdc1 (add:listen server port 3001)
-=======
-    "express": "^5.2.1"
->>>>>>> 3e6fdc1 (add:listen server port 3001)
   },
   "type": "module"
 }
