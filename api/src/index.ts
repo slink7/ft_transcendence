@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import express from "express";
 import { Client, Pool } from "pg";
 import { CONFIG } from "./config.js";
@@ -47,45 +46,3 @@ app.get("/playerlist", async (req, res) => {
 
 app.listen(port, serverStart);
 
-// function callbackGet() {
-//     console.log("une fonction get a ete utilisee ");
-// }
-// app.get("/test", async (req, res) => {
-//     callbackGet();
-//     var test = {
-//         name: "jon",
-//         lastname: "le douaron"
-//     }
-//     console.log("test is called ");
-//     res.send(test);
-// });
-=======
-import express from "express"
-import { CONFIG } from "./config.js"
-
-const app = express();
-const port = CONFIG.PORT;
-
-function serverStart()
-{
-    console.log(`Le serveur est en cours d'exécution sur http://localhost:${port}` );
-}
-
-function callbackGet()
-{
-    console.log("une fonction geta ete utilisee");
-}
-
-app.get("/test", async (req, res) => {
-    callbackGet();
-    console.log("test is called");
-    res.send("Route /test appelée");
-});
-app.listen(port, serverStart);
-
-
->>>>>>> 3e6fdc1 (add:listen server port 3001)
-// // const express = require('express');
-// // const cors =require('cors');
-// // const app = express();
-// const port = 3000;
