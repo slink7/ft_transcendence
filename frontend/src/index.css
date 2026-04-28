@@ -76,18 +76,24 @@
 --color-black-950: #130f15;
 
   /* Fonts */
-  --font-vintage: Vintage, sans-serif
+  --font-vintage: Vintage, sans-serif;
+  --font-wide: Widescreen, sans-serif;
+  --font-bryant: Bryant, sans-serif;
 }
 
 @font-face {
 	font-family: "Vintage";
-	src: url(./assets/fonts/VintageLegacy-Regular.otf);
+	src: url("./assets/fonts/VintageLegacy-Regular.otf");
+}
 
+@font-face {
 	font-family: "Widescreen";
-	src: url(./assets/fonts/Widescreen-Trial-Medium.ttf);
+	src: url("./assets/fonts/Widescreen-Trial-Medium.ttf");
+}
 
+@font-face {
 	font-family: "Bryant";
-	src: url(./assets/fonts/Bryant-Regular\ Regular.otf);
+	src: url("./assets/fonts/Bryant-Regular-Regular.otf");
 }
 
 body {
