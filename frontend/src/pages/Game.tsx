@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import GameCanvas from "../components/GameCanvas.tsx";
+import GameCanvas from "../features/GameCanvas.tsx";
 import { useTranslation } from "react-i18next";
 
 export default function Game() {
