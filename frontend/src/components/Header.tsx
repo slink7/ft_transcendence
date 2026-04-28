@@ -4,7 +4,7 @@ function Title() {
 	const {t, i18n} = useTranslation();
 	return (
 		<>
-			<h1>{t("header.title")}</h1>
+			<h1 >{t("header.title")}</h1>
 			<p style={{fontSize: 12}}>{t('header.subtitle')}</p>
 		</>
 	)
