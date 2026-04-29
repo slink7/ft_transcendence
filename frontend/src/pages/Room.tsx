@@ -28,9 +28,15 @@ export default function Room() {
 			setRoom({ clients: msg.clients, owner: msg.owner, id: msg.id});
 		}, "ROOM_INFO");
 
+		const unsubStart = subscribe((msg: ServerMessage) => {
+			if (msg.type === "GAME_START")
+				navigate('/game');
+		}, "GAME_START");
+
 		return (() => {
 			unsubErr();
 			unsubAck();
+			unsubStart();
 		});
 	}, []);
 
@@ -51,7 +57,7 @@ export default function Room() {
 						<NameTag key={k} client={client} as="h3"/>
 					))
 				}
-			<button onClick={() => navigate("/game")}>
+			<button onClick={() => send({ type: "START_GAME" })}>
 				{t('room.start')}
 			</button>
 			<button onClick={() => {

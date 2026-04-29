@@ -57,24 +57,27 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 		});
 	}
 
-	function broadcastRoomInfo(roomID: string) {
+	function broadcastRoom(roomID: string, f: (room: Room) => ServerMessage) {
 		const room = roomManager.getRoom(roomID);
 		if (!room)
 			return ;
-		const roomData: CRoom = convertRoom(room);
-		// const clients = room.clients.map((clientID: string) => {
-		// 	return (convertClient(clientManager.getClient(clientID)));
-		// });
-
+		const toSend: ServerMessage = f(room);
+		console.log("Broadcast ", toSend);
 		room.clients.forEach((id) => {
-			const cli = clientManager.getClient(id);
-			if (!cli)
+			const client = clientManager.getClient(id);
+			if (!client)
 				return ;
-			send(cli.socket, {
-				type: "ROOM_INFO",
-				...roomData
-			});
+			send(client.socket, toSend);
 		});
+	}
+
+	function broadcastRoomInfo(roomID: string) {
+		broadcastRoom(roomID, (room: Room) => {
+			return ({
+				type: "ROOM_INFO",
+				...convertRoom(room)
+			});
+		})
 	}
 
 
@@ -186,8 +189,17 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 				return (send(ws, { type: "ACK" }));
 			}
 
-			send(ws, { type: "UNKNOWN", value: msg.type });
+			if (msg.type === "START_GAME") {
+				const roomID = clientManager.getClient(UUID)?.roomID || "";
+				broadcastRoom(roomID, () => {
+					return ({
+						type: "GAME_START",
+					});
+				});
+				return ;
+			}
 
+			send(ws, { type: "UNKNOWN", value: msg.type });
 			return ;
 		});
 
