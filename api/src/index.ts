@@ -1,4 +1,5 @@
 import express from "express";
+
 import { Pool } from "pg";
 import { CONFIG } from "./config.js";
 import { Player } from "./class/Player.js";
@@ -111,4 +112,3 @@ app.get("/player/:id_player", async (req, res) => {
 });
 
 app.listen(port, serverStart);
-
