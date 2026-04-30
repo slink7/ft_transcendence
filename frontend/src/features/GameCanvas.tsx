@@ -9,6 +9,8 @@ import { draw } from "../scripts/Draw.ts"
 import type { ServerMessage, ClientMessage } from "/app/shared/types.ts"
 import { subscribe, send } from "../scripts/socket.ts";
 
+import { useClient } from "../scripts/store.ts";
+
 type Cell = number;
 
 type Piece = {
@@ -21,6 +23,9 @@ const REAL_WIDTH: number = GAME_CONFIG.WIDTH * CONFIG.CELL_SIZE;
 const REAL_HEIGHT: number = GAME_CONFIG.HEIGHT * CONFIG.CELL_SIZE;
 
 export default function GameCanvas() {
+
+	const {client, setClient} = useClient();
+
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const paletteRef = useRef(0);
 
@@ -34,7 +39,7 @@ export default function GameCanvas() {
 	 */
 	useEffect(() => {
 		const unsub0 = subscribe((msg: ServerMessage) => {
-			clientGameRef.current.applyServerState(msg.state);
+			clientGameRef.current.applyServerState(msg.states[client.id]);
 		}, "STATE");
 
 		const unsub1 = subscribe((msg: ServerMessage) => {

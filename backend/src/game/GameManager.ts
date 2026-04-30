@@ -34,28 +34,10 @@ export class GameManager {
 	}
 
 	update(UUID: string) {
-		this.players.get(UUID)?.game.update();
-		// this.players.forEach((player) => {
-		// 	player.game.update();
-		// });
-	}
-
-	broadcast(UUID: string) {
 		const player = this.players.get(UUID);
 		if (!player)
 			return ;
-		console.log("Sending to ", player.ws);
-		player.ws.send(JSON.stringify({
-			type: "STATE",
-			state: player.game.getState()
-		}));
-		// this.players.forEach((player) => {
-		// 	const state = player.game.getState();
-		//
-		// 	player.ws.send(JSON.stringify({
-		// 		type: "STATE",
-		// 		state
-		// 	}));
-		// });
+		player.game.update();
+		return (player.game.getState());
 	}
 }

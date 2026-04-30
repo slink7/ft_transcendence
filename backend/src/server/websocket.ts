@@ -212,9 +212,17 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 				})
 				setTimeout(() => {
 					const timerID = setInterval(() => {
+						const states = {};
 						room.clients.forEach((clientID: string) => {
-							gameManager.update(clientID);
-							gameManager.broadcast(clientID);
+							states[clientID] = gameManager.update(clientID);
+						});
+						broadcastRoom(roomID, () => {
+							return ({
+								type: "STATE",
+								states: {
+									...states
+								}
+							});
 						});
 					}, 1000); // Update period
 				}, 2000); // Initial delay
