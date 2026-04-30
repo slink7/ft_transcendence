@@ -1,4 +1,8 @@
 {
+	"lng": {
+		"en": "English",
+		"fr": "Français"
+	},
 	"header": {
 		"title": " - Wextranscendence - ",
 		"subtitle": "-Wextetris for connoisseurs ;)"
