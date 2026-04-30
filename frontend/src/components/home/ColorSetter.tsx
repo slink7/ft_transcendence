@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { useClient } from "../scripts/store.ts";
+import { useClient } from "../../scripts/store.ts";
 
-import { send } from "../scripts/socket.ts"
+import { send } from "../../scripts/socket.ts"
 
 import { useTranslation } from "react-i18next";
 
