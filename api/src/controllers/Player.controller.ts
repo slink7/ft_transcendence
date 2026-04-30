@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import { getBasesPlayer, getAllBasesPlayer } from "../service/Player.service.js";
+import { selectAllPlayer, selectPlayer } from "../service/Player.service.js";
 import { Player , parsePlayer } from "../class/Player.js"
 
 
-export async function getPlayerList(req: Request, res: Response) {
+export async function getAllPlayer(req: Request, res: Response) {
     try {
-        console.log("try get all player");
-        var playerResult = await getAllBasesPlayer();
+        console.log("try get all Player");
+        var playerResult = await selectAllPlayer();
         var playerRows = playerResult.rows;
         var playerList: Player[] = [];
         playerRows.forEach(player => {
@@ -25,8 +25,8 @@ export async function getPlayer(req: Request, res: Response, field:"id_player" |
 {
     const value = field === "id_player" ? req.params.id_player : req.params.username;
     try {
-        console.log(`try get player ${value}`);
-        var playerResult = await getBasesPlayer(value, field);
+        console.log(`try get Player ${value}`);
+        var playerResult = await selectPlayer(value, field);
         if(playerResult.rowCount == 0)
         {
             res.status(404).send({
@@ -43,7 +43,6 @@ export async function getPlayer(req: Request, res: Response, field:"id_player" |
             error: "Erreur serveur"
         });
     }
-
 }
 // export async function getPlayerList(req: Request, res: Response, pool: Pool) {
 //     const playersMap = new Map<number, Player>();

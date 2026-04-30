@@ -1,6 +1,6 @@
 import { pool } from "../db.js";
 
-export async function getAllTheme()
+export async function selectAllTheme()
 {
     const query = `SELECT
                 theme.l_left,
@@ -14,7 +14,7 @@ export async function getAllTheme()
     return await pool.query(query);  
 }
 
-export async function getTheme(id_theme:number) 
+export async function selectThemeById(id_theme:any) 
 {
     const query = `SELECT
                 theme.l_left,
