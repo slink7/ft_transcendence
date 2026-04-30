@@ -3,7 +3,9 @@
 		"en": "English",
 		"fr": "Français"
 	},
-	"header": {
+	"navbar": {
+		"profile": "Profile",
+		"home": "Home",
 		"title": " - Wextranscendence - ",
 		"subtitle": "-Wextetris for connoisseurs ;)"
 	},
@@ -35,7 +37,6 @@
 		"quit": "Quit room"
 	},
 	"game": {
-		"title": "Game",
-		"quit": "Quit"
+		"title": "Game"
 	}
 }

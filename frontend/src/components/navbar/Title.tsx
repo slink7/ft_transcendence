@@ -5,7 +5,7 @@ export default function Title() {
 	
 	return (
 		<div>
-			<h1>{t('header.title')}</h1>
+			<h1>{t('navbar.title')}</h1>
 		</div>
 	)
 }

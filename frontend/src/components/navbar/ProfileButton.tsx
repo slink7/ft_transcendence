@@ -1,11 +1,11 @@
 import { useTranslation } from "react-i18next";
 
 export default function ProfileButton() {
-	const { i18n } = useTranslation();
+	const { t } = useTranslation();
 	
 	return (
 		<div>
-			<p>Future profile button</p>
+			<p>{t('navbar.profile')}</p>
 		</div>
 	)
 }
