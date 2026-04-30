@@ -5,7 +5,7 @@ export default function Subtitle() {
 	
 	return (
 		<div>
-			<h2>{t('header.subtitle')}</h2>
+			<h2>{t('navbar.subtitle')}</h2>
 		</div>
 	)
 }
