@@ -31,6 +31,8 @@ export default function GameCanvas() {
 
 	const clientGameRef = useRef<ClientGame>(new ClientGame());
 
+	const [states, setStates] = useState({});
+
 	let lastScore = -1;
 	const [score, setScore] = useState(0);
 
@@ -39,6 +41,7 @@ export default function GameCanvas() {
 	 */
 	useEffect(() => {
 		const unsub0 = subscribe((msg: ServerMessage) => {
+			setStates(msg.states);
 			clientGameRef.current.applyServerState(msg.states[client.id]);
 		}, "STATE");
 
@@ -141,23 +144,40 @@ export default function GameCanvas() {
 		loop();
 	}, []);
 
+	const [scores, setScores] = useState([]);
+
+	useEffect(() => {
+		var out = [];
+
+		Object.keys(states).forEach(function(key, index) {
+			out.push(<p> {key}: {states[key].score} </p>);
+		});
+
+		setScores(out);
+	}, [states]);
+
 	/**
 	 *  HTML return
 	 */
 	return (
 		<div>
-			<h2>Score: { clientGameRef.current.game.score}</h2>
+			<h2>Score: {clientGameRef.current.game.score}</h2>
 			<canvas
 				ref={canvasRef}
 				width={REAL_WIDTH}
 				height={REAL_HEIGHT}
 			/>
-			<div className="controls">
-				<button onClick={() => registerGameInput({ type: "LEFT" })}>⬅️</button>
-				<button onClick={() => registerGameInput({ type: "RIGHT" })}>➡️</button>
-				<button onClick={() => registerGameInput({ type: "ROTATE"})}>🔄</button>
-				<button onClick={() => registerGameInput({ type: "DOWN" })}>⬇️</button>
-			</div>
+			{
+				scores
+			}
+			{
+				// <div className="controls">
+				// 	<button onClick={() => registerGameInput({ type: "LEFT" })}>⬅️</button>
+				// 	<button onClick={() => registerGameInput({ type: "RIGHT" })}>➡️</button>
+				// 	<button onClick={() => registerGameInput({ type: "ROTATE"})}>🔄</button>
+				// 	<button onClick={() => registerGameInput({ type: "DOWN" })}>⬇️</button>
+				// </div>
+			}
 		</div>
 	);
 }
