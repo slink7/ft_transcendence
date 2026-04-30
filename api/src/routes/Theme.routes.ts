@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { getThemeList } from "../controllers/Theme.controller.js"; 
+import { getAllTheme, getTheme } from "../controllers/Theme.controller.js"; 
 
 export const themeRouter = Router();
 
-themeRouter.get("/themelist", getThemeList);
+themeRouter.get("/themelist", getAllTheme);
+themeRouter.get("/id_theme/:id_theme", getTheme);

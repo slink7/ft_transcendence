@@ -1,11 +1,3 @@
-import { Theme } from "./Theme.js"
-import { Score } from "./Score.js"
-import { Request, Response } from "express";
-import { Pool } from "pg";
-import { CONFIG } from "../config.js";
-import { Game } from "./Game.js";
-
-
 
 export class Player {
     id_player: number;
@@ -33,3 +25,4 @@ export function parsePlayer(player:any)
         player.id_theme
     );
 }
+

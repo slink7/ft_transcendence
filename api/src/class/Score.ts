@@ -2,19 +2,33 @@ import { Game } from "./Game.js"
 
 export class Score
 {
-	// party:Party;
+	id_player:number
+	id_game:number;
 	level:number;
 	score:number;
 	line_cleared:number;
 	win:boolean;
-	game:Game;
 
-	constructor(level:number, score:number, line_cleared:number,win:boolean, game:Game)
+	constructor(id_player:number, id_game:number,level:number, score:number, line_cleared:number,win:boolean, )
 	{
+		this.id_player = id_player;
+		this.id_game = id_game;
 		this.level = level;
 		this.score = score;
 		this.line_cleared = line_cleared;
 		this.win = win;
-		this.game = game;
 	}
 }
+
+export function parseScore(score:any)
+{
+	return new Score(
+		score.id_player,
+		score.id_game,
+		score.level,
+		score.score,
+		score.line_cleared,
+		score.win,
+	);
+}
+
