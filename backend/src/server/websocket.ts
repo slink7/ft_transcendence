@@ -4,6 +4,7 @@ import { ClientMessage, ServerMessage } from "../../shared/types";
 
 import { Client, ClientManager } from "./ClientManager";
 import { Room, RoomManager } from "./RoomManager";
+import { GameManager } from "../game/GameManager"
 
 function createError(msg: string): ServerMessage {
 	return ({ type: "ERROR", message: msg });
@@ -44,6 +45,7 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 
 	const clientManager = new ClientManager();
 	const roomManager = new RoomManager();
+	const gameManager = new GameManager();
 
 	function convertRoom(room: Room): CRoom {
 		const clients: CClient[] = room.clients.map((UUID: string) => {
@@ -62,7 +64,7 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 		if (!room)
 			return ;
 		const toSend: ServerMessage = f(room);
-		console.log("Broadcast ", toSend);
+		// console.log("Broadcast ", toSend);
 		room.clients.forEach((id) => {
 			const client = clientManager.getClient(id);
 			if (!client)
@@ -127,8 +129,11 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 			if (!client)
 				return ;
 
-			if (msg.type === "GAME_INPUT")
+			if (msg.type === "GAME_INPUT") {
+				gameManager.handleInput(UUID, msg.input);
+				send(ws, { type: "ACK" });
 				return ;
+			}
 
 			if (msg.type === "SET_NAME") {
 				client.name = msg.name;
@@ -176,7 +181,7 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 			}
 
 			if (msg.type === "QUIT_ROOM") {
-				const roomID = clientManager.getClient(UUID)?.roomID || "";
+				const roomID = client?.roomID || "";
 				const success: boolean = roomManager.quitRoom(UUID, roomID);
 				if (!success)
 					return (send(ws, cantQuit));
@@ -190,12 +195,29 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 			}
 
 			if (msg.type === "START_GAME") {
-				const roomID = clientManager.getClient(UUID)?.roomID || "";
+				const roomID = client?.roomID || "";
 				broadcastRoom(roomID, () => {
 					return ({
 						type: "GAME_START",
 					});
 				});
+				const room = roomManager.getRoom(roomID);
+				if (!room)
+					return ;
+				room.clients.forEach((clientID: string) => {
+					const cli = clientManager.getClient(clientID);
+					if (!cli)
+						return ;
+					gameManager.addPlayer(cli.UUID, cli.socket);
+				})
+				setTimeout(() => {
+					const timerID = setInterval(() => {
+						room.clients.forEach((clientID: string) => {
+							gameManager.update(clientID);
+							gameManager.broadcast(clientID);
+						});
+					}, 1000); // Update period
+				}, 2000); // Initial delay
 				return ;
 			}
 

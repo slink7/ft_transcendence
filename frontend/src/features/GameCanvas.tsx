@@ -6,6 +6,9 @@ import { ClientGame } from "../scripts/ClientGame.ts"
 import { draw } from "../scripts/Draw.ts"
 // import { getSocket } from "./Socket.ts";
 
+import type { ServerMessage, ClientMessage } from "/app/shared/types.ts"
+import { subscribe, send } from "../scripts/socket.ts";
+
 type Cell = number;
 
 type Piece = {
@@ -19,7 +22,6 @@ const REAL_HEIGHT: number = GAME_CONFIG.HEIGHT * CONFIG.CELL_SIZE;
 
 export default function GameCanvas() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const socketRef = useRef<WebSocket | null>(null);
 	const paletteRef = useRef(0);
 
 	const clientGameRef = useRef<ClientGame>(new ClientGame());
@@ -31,19 +33,17 @@ export default function GameCanvas() {
 	 *  WebSocket
 	 */
 	useEffect(() => {
-		if (socketRef.current) return;
+		const unsub0 = subscribe((msg: ServerMessage) => {
+			clientGameRef.current.applyServerState(msg.state);
+		}, "STATE");
 
-		// socketRef.current = getSocket()createSocket((msg: any) => {
-		// 	if (msg.type === "STATE") {
-		// 		clientGameRef.current.applyServerState(msg.state);
-		// 	} else if (msg.type === "ACK") {
-		// 		clientGameRef.current.confirmInput();
-		// 	}
-		// });
+		const unsub1 = subscribe((msg: ServerMessage) => {
+			clientGameRef.current.confirmInput();
+		}, "ACK");
 
 		return () => {
-			socketRef.current?.close();
-			socketRef.current = null;
+			unsub0();
+			unsub1();
 		};
 	}, []);
 
@@ -53,14 +53,12 @@ export default function GameCanvas() {
 	function registerGameInput(input: any) {
 		if (!input.type)
 			return ;
-		socketRef.current.send(JSON.stringify(input));
+		send({type: "GAME_INPUT", input: input});
 		clientGameRef.current.applyLocalInput(input);
 	}
 
 	useEffect(() => {
 		const handleKey = (e: KeyboardEvent) => {
-			if (!socketRef.current) return;
-
 			const map: Record<string, string> = {
 				ArrowLeft: "LEFT",
 				ArrowRight: "RIGHT",
@@ -88,7 +86,6 @@ export default function GameCanvas() {
 		const threshold = 30;
 
 		const onClick = (e: TouchEvent) => {
-			console.log("TourchStart");
 			startX = e.touches[0].clientX;
 			startY = e.touches[0].clientY;
 		};
