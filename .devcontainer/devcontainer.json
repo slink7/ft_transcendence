@@ -1,0 +1,6 @@
+{
+  "name": "transcendence",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "frontend",
+  "workspaceFolder": "/app"
+}

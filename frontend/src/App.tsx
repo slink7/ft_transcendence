@@ -1,10 +1,8 @@
 
 import { useRef, useEffect } from "react"
 
-import Header from "./components/Header.tsx";
 import Router from "./components/Router.tsx";
-import Footer from "./components/Footer.tsx";
-
+import AuthProvider from "./auth/AuthContext.tsx";
 
 import { connectSocket, subscribe, send } from "./scripts/socket.ts"
 import { useClient, useClientState, useRoom } from "./scripts/store.ts";
@@ -35,10 +33,8 @@ export default function App() {
 	}, []);
 
 	return (
-		<div>
-			<Header />
+		<AuthProvider>
 			<Router />
-			<Footer />
-		</div>
+		</AuthProvider>
 	);
 }
