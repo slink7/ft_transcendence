@@ -62,7 +62,7 @@ app.get("/playerlist", async (req, res) => {
                 element.email,
                 element.color_pseudo,
                 theme,
-                play
+                
             );
             playersMap.set(element.id_player, player);
         }
@@ -72,7 +72,6 @@ app.get("/playerlist", async (req, res) => {
                 element.score,
                 element.line_cleared
             );
-            player.play.push(newPlay);
         }
         });
         res.send(Array.from(playersMap.values()));
@@ -99,7 +98,7 @@ app.get("/player/:id_player", async (req, res) => {
                                 result.rows[0].username, 
                                 result.rows[0].email, 
                                 result.rows[0].color_pseudo, 
-                                theme, play);
+                                theme);
         res.send(player);
     }
     catch (err) {
