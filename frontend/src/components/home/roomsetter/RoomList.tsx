@@ -14,23 +14,13 @@ type Room = {
 export default function RoomList() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
-	const [roomID, setRoomID] = useState<string | null>(null);
 	const [roomList, setRoomList] = useState<Room[]>([]);
 
 	function navToRoom(ID: string) {
 		navigate(`/room/${ID}`);
 	}
 
-	useEffect(() => {
-		if (roomID)
-			navToRoom(roomID);
-	}, [roomID]);
-	
-	useEffect(() => {
-		return (subscribe((msg: ServerMessage) => {
-			setRoomID(msg.roomID);
-		}, "CREATED_ROOM"));
-	}, []);
+
 
 	function askForRoomList() {
 		send({type: "GET_ROOMS"});
@@ -54,7 +44,7 @@ export default function RoomList() {
 								className="block cursor-pointer rounded-lg border border-yellow-200 bg-white px-3 py-2 shadow-sm transition hover:border-yellow-500 hover:bg-yellow-50"
 								onClick={() => {navToRoom(room.id)}}
 							>
-								<RoomTag room={room} as="div" clientCount/> 
+								<RoomTag room={room} as="div" clientCount/>
 								{/* modify to room name for easy translation */}
 							</a>
 						</div>
