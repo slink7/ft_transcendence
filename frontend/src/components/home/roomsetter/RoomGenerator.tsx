@@ -21,13 +21,11 @@ export default function RoomGenerator() {
 	};
 
 	return (
-		<div>
-			<form action={joinRoom}>
-				<input name="roomID"/>
-				<button onClick={createRoom}>
-					{t('home.create')}
-				</button>
-			</form>
-		</div>
+		<form className="flex items-center border-2 border-black-800 rounded" action={joinRoom}>
+			<input className="py-2 px-4 bg-white" name="roomID"/>
+			<button className="bg-yellow-500 hover:bg-yellow-600 text-yellow-50 py-2 px-4" onClick={createRoom}>
+				{t('home.create')}
+			</button>
+		</form>
 	)
 }

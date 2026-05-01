@@ -22,14 +22,17 @@ export default function Home() {
 	const {t, i18n} = useTranslation();
 	const { client, setClient } = useClient();
 	return (
-		<div>
-			<h3>{t('home.welcome')} <NameTag client={client}/></h3>
-				<h4> - {t('home.customization')} - </h4>
+		<div className="grow text-center flex flex-col gap-10 items-center justify-center">
+			<h3 className="text-2xl font-bold">{t('home.welcome')} <NameTag client={client}/></h3>
+			<div className="w-full max-w-md text-center flex flex-col gap-4 items-center justify-center">
+				<h4 className="text-lg font-bold"> - {t('home.customization')} - </h4>
 				<NameSetter />
-				<div>-</div>
 				<ColorSetter />
-				<button onClick={() => localStorage.clear()}> {t('home.storage')} </button>
+			</div>
 			<RoomSetter/>
+			<button className="bg-dark-red-500 shadow-sm transition hover:bg-dark-red-600 text-yellow-50 py-2 px-4 rounded" onClick={() => localStorage.clear()}>
+				{t('home.storage')}
+			</button>
 		</div>
 	);
 }

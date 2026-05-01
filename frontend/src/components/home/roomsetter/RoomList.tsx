@@ -45,12 +45,15 @@ export default function RoomList() {
 
 	return (
 		<div>
-			<h5> - {t('home.list')} - </h5>
+			<h4 className="text-lg font-bold"> - {t('home.list')} - </h4>
 			{
 				roomList?.map((room: Room, k) => {
 					return (
-						<div key={k}>
-							<a onClick={() => {navToRoom(room.id)}}>
+						<div key={k} className="mb-2">
+							<a
+								className="block cursor-pointer rounded-lg border border-yellow-200 bg-white px-3 py-2 shadow-sm transition hover:border-yellow-500 hover:bg-yellow-50"
+								onClick={() => {navToRoom(room.id)}}
+							>
 								<RoomTag room={room} as="div" clientCount/> 
 								{/* modify to room name for easy translation */}
 							</a>
@@ -58,7 +61,7 @@ export default function RoomList() {
 					);
 				})
 			}
-			<button onClick={() => {askForRoomList()}}>
+			<button className="bg-yellow-500 hover:bg-yellow-600 text-yellow-50 py-2 px-4 rounded" onClick={() => {askForRoomList()}}>
 				{t('home.refresh')}
 			</button>
 		</div>
