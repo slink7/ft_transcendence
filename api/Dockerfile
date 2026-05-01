@@ -2,8 +2,8 @@ FROM node:20
 
 WORKDIR /app
 
-COPY /tools/package*.json /
-COPY /tools/tsconfig.json /
+COPY ./package*.json ./
+COPY ./tsconfig.json ./
 RUN npm install
 
 COPY . .
