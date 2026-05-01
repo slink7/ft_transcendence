@@ -2,6 +2,8 @@ export type Client = {
 	id?: string | null;
 	name: string;
 	color: string;
+	user: string;
+	password: string;
 }
 
 export type Room = {
@@ -10,6 +12,13 @@ export type Room = {
 	owner: Client;
 	clientCount?: number;
 }
+
+type AuthContextType = {
+  isAuthenticated: boolean;
+  user: string | null;
+  login: (username: string) => void;
+  logout: () => void;
+};
 
 export type GameInput =
 	| { type: "LEFT" }

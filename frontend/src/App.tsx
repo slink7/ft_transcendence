@@ -2,6 +2,7 @@
 import { useRef, useEffect } from "react"
 
 import Router from "./components/Router.tsx";
+import AuthProvider from "./auth/AuthContext.tsx";
 
 import { connectSocket, subscribe, send } from "./scripts/socket.ts"
 import { useClient, useClientState, useRoom } from "./scripts/store.ts";
@@ -32,8 +33,8 @@ export default function App() {
 	}, []);
 
 	return (
-		<div>
+		<AuthProvider>
 			<Router />
-		</div>
+		</AuthProvider>
 	);
 }
