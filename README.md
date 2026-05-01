@@ -19,7 +19,7 @@ Checklist modules à viser :
 - [ ] **Major Game** - Jeu web complet jouable dans le navigateur.
 - [ ] **Major Game** - Deux joueurs remote sur deux machines/navigateurs.
 - [ ] **Major Web** - API publique DB sécurisée avec clé API, rate limit, documentation et 5 endpoints minimum.
-- [ ] **Major DevOps** - Prometheus/Grafana avec exporters, dashboard, alertes et accès sécurisé.
+- [x] **Major DevOps** - Prometheus/Grafana avec exporters, dashboard, alertes et accès sécurisé.
 - [ ] **Minor User** - Game statistics + match history.
 - [ ] **Minor i18n** - Traduction complète en au moins 3 langues.
 - [ ] **Minor Web** - Design system complet 10 composants : icones, typographie, palette
@@ -29,9 +29,9 @@ Total visé : **15 points**.
 
 ### 3. Checklist Obligatoire Sujet
 
-- [ ] Frontend, backend et database présents.
-- [ ] Projet lançable avec une commande (`make up` ou équivalent).
-- [ ] `.env` ignoré par Git et `.env.example` maintenu.
+- [x] Frontend, backend et database présents.
+- [x] Projet lançable avec une commande (`make up` ou équivalent).
+- [x] `.env` ignoré par Git et `.env.example` maintenu.
 - [ ] Auth email/password sécurisée : hash + salt.
 - [ ] Validation des inputs côté frontend et backend.
 - [ ] Multi-utilisateurs simultanés sans corruption d’état.
@@ -43,27 +43,27 @@ Total visé : **15 points**.
 ### 4. Branches À Consolider
 
 - `master` : base actuelle.
-- `origin/seb/gamefix` : Tetris fonctionnel, rooms/game state, score list. À intégrer en priorité.
-- `origin/features/backend/api` : API DB à reprendre, à sécuriser et adapter au backend final.
-- `origin/feature/devops-monitoring` : Prometheus/Grafana déjà prêt, à rebaser après stabilisation backend/DB.
-- `origin/components` : composants UI et structure frontend, à intégrer après gameplay/routes.
-- `origin/game_rooms` : ancienne branche, à utiliser seulement pour cherry-pick ciblé si nécessaire ou à supprimer
+- ~~`origin/seb/gamefix` : Tetris fonctionnel, rooms/game state, score list. À intégrer en priorité.~~
+- ~~`origin/features/backend/api` : API DB à reprendre, à sécuriser et adapter au backend final.~~
+- ~~`origin/feature/devops-monitoring` : Prometheus/Grafana déjà prêt, à rebaser après stabilisation backend/DB.~~
+- ~~`origin/components` : composants UI et structure frontend, à intégrer après gameplay/routes.~~
+- ~~`origin/game_rooms` : ancienne branche, à utiliser seulement pour cherry-pick ciblé si nécessaire ou à supprimer~~
 
 ## Roadmap Par Milestone
 
 ### Milestone 0 - Intégration Propre
 
-- [ ] Intégrer `origin/seb/gamefix`.
+- [x] Intégrer `origin/seb/gamefix`.
 - [ ] Résoudre les conflits gameplay/WebSocket.
-- [ ] Vérifier que `make up` lance frontend/backend/database.
+- [x] Vérifier que `make up` lance frontend/backend/database.
 
 ### Milestone 1 - Tetris Présentable
 
-- [ ] Tetris jouable dans la page Game.
-- [ ] Création/rejoindre une room fonctionnelle.
-- [ ] Deux joueurs peuvent jouer dans la même partie.
-- [ ] Synchronisation stable entre clients.
-- [ ] Gestion minimale des déconnexions/reconnexions.
+- [x] Tetris jouable dans la page Game.
+- [x] Création/rejoindre une room fonctionnelle.
+- [x] Deux joueurs peuvent jouer dans la même partie.
+- [x] Synchronisation stable entre clients.
+- [x] Gestion minimale des déconnexions/reconnexions.
 - [ ] Score visible pendant/après la partie.
 - [ ] Page Game propre avec canvas + tableau des joueurs/scores.
 
@@ -81,11 +81,11 @@ Total visé : **15 points**.
 
 ### Milestone 3 - API Publique DB
 
-- [ ] Préfixe API clair : `/api`.
+- [x] Préfixe API clair : `/api`.
 - [ ] Clé API obligatoire.
 - [ ] Rate limiting.
 - [ ] Documentation courte dans README.
-- [ ] Minimum 5 endpoints couvrant GET, POST, PUT, DELETE.
+- [x] Minimum 5 endpoints couvrant GET, POST, PUT, DELETE.
 - [ ] Endpoints recommandés : players, games, scores, leaderboard, themes/friends.
 - [ ] Réponses JSON cohérentes avec codes HTTP propres.
 
@@ -102,15 +102,23 @@ Total visé : **15 points**.
 
 ### Milestone 5 - Monitoring Et Finalisation
 
-- [ ] Rebaser/intégrer `feature/devops-monitoring`.
-- [ ] Adapter les requêtes postgres-exporter au schéma DB final.
-- [ ] Prometheus scrape backend `/metrics`.
-- [ ] Prometheus scrape PostgreSQL via postgres-exporter.
-- [ ] Blackbox exporter vérifie frontend/backend/Grafana.
-- [ ] Dashboard Grafana chargé automatiquement au démarrage.
-- [ ] Alertes Grafana/Prometheus présentes.
-- [ ] Accès Grafana protégé par variables `.env`.
-- [ ] Documenter URL Grafana/Prometheus dans README.
+- [x] Rebaser/intégrer `feature/devops-monitoring`.
+- [x] Adapter les requêtes postgres-exporter au schéma DB final.
+- [x] Prometheus scrape backend `/metrics`.
+- [x] Prometheus scrape API `/metrics`.
+- [x] Prometheus scrape PostgreSQL via postgres-exporter.
+- [x] Blackbox exporter vérifie frontend/backend/API/Grafana.
+- [x] Dashboard Grafana chargé automatiquement au démarrage.
+- [x] Alertes Grafana/Prometheus présentes.
+- [x] Accès Grafana protégé par variables `.env`.
+- [x] Documenter URL Grafana/Prometheus dans README.
+
+#### Accès monitoring
+
+- Grafana : `http://localhost:3002`
+- Prometheus : `http://localhost:9090`
+- Identifiants Grafana par défaut : `GRAFANA_ADMIN_USER` / `GRAFANA_ADMIN_PASSWORD` dans `.env.example`.
+- Logs monitoring : `make monitor-logs`.
 
 ## Stretch Non Prioritaire
 
@@ -121,6 +129,5 @@ Total visé : **15 points**.
 - [ ] User interactions avancées : chat, friends complet, profils riches.
 - [ ] Multi-navigateurs.
 - [ ] Backend microservices.
-
 
 

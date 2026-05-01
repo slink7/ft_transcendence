@@ -4,6 +4,7 @@ import { playerRouter } from "./routes/Player.routes.js";
 import { themeRouter } from "./routes/Theme.routes.js";
 import { scoreRouter } from "./routes/Score.routes.js";
 import { gameRouter } from "./routes/Game.routes.js";
+import { metricsHandler, metricsMiddleware } from "./monitoring/metrics.js";
 
 
 const app = express();
@@ -11,6 +12,13 @@ const port = CONFIG.PORT;
 const baseUrl = "/wextrapi"
 
 app.use(express.json());
+app.use(metricsMiddleware);
+
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok", service: "wextrapi" });
+});
+
+app.get("/metrics", metricsHandler);
 
 
 app.use(`${baseUrl}/player`, playerRouter );

@@ -28,7 +28,10 @@ re: fclean all
 logs:
 	$(COMPOSE) logs -f
 
+monitor-logs:
+	$(COMPOSE) logs -f prometheus grafana postgres-exporter blackbox-exporter
+
 ps:
 	$(COMPOSE) ps
 
-.PHONY: all up detached stop down clean fclean re logs ps
+.PHONY: all up attached stop down clean fclean re logs monitor-logs ps

@@ -1,0 +1,69 @@
+groups:
+  - name: wextranscendence.availability
+    rules:
+      - alert: WexBackendDown
+        expr: probe_success{job="blackbox-http", instance="http://backend:3000/health"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend is down"
+          description: "The backend health endpoint has failed for more than 1 minute."
+
+      - alert: WexApiDown
+        expr: probe_success{job="blackbox-http", instance="http://api:3001/health"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "API is down"
+          description: "The public API health endpoint has failed for more than 1 minute."
+
+      - alert: WexFrontendDown
+        expr: probe_success{job="blackbox-http", instance="http://frontend:5173"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Frontend is down"
+          description: "The frontend probe has failed for more than 1 minute."
+
+      - alert: WexDatabaseExporterDown
+        expr: up{job="postgres-exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL exporter is down"
+          description: "Prometheus cannot scrape database metrics."
+
+  - name: wextranscendence.backend
+    rules:
+      - alert: WexBackendServerErrors
+        expr: sum(rate(wex_backend_http_requests_total{status_code=~"5.."}[2m])) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Backend 5xx errors detected"
+          description: "The game backend is returning HTTP 5xx responses."
+
+      - alert: WexBackendHighLatency
+        expr: histogram_quantile(0.95, sum(rate(wex_backend_http_request_duration_seconds_bucket[5m])) by (le)) > 1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Backend latency is high"
+          description: "Game backend p95 HTTP latency is above 1 second."
+
+  - name: wextranscendence.api
+    rules:
+      - alert: WexApiServerErrors
+        expr: sum(rate(wex_api_http_requests_total{status_code=~"5.."}[2m])) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "API 5xx errors detected"
+          description: "The public API is returning HTTP 5xx responses."
