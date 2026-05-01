@@ -9,7 +9,9 @@ import { draw } from "../scripts/Draw.ts"
 import type { ServerMessage, ClientMessage } from "/app/shared/types.ts"
 import { subscribe, send } from "../scripts/socket.ts";
 
-import { useClient } from "../scripts/store.ts";
+import { useClient, useRoom } from "../scripts/store.ts";
+
+import NameTag from "../components/NameTag.tsx";
 
 type Cell = number;
 
@@ -25,6 +27,7 @@ const REAL_HEIGHT: number = GAME_CONFIG.HEIGHT * CONFIG.CELL_SIZE;
 export default function GameCanvas() {
 
 	const {client, setClient} = useClient();
+	const {room} = useRoom();
 
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const paletteRef = useRef(0);
@@ -150,7 +153,17 @@ export default function GameCanvas() {
 		var out = [];
 
 		Object.keys(states).forEach(function(key, index) {
-			out.push(<p> {key}: {states[key].score} </p>);
+			const client = room.clients.filter((client) => {
+				return (client.id === key);
+			})[0];
+			if (!client) {
+				console.log(room.clients);
+				console.log("Zebi");
+				return ;
+			}
+			out.push(<div key={index}><NameTag client={client} /> {states[key].score}pts </div>);
+			// out.push(<p> {client.name}: {states[key].score} </p>);
+			// TODO Afficher le nom du joueur / stocker les IDs des joueurs
 		});
 
 		setScores(out);

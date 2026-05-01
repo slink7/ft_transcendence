@@ -21,6 +21,7 @@ function send(ws: WebSocket, msg: ServerMessage) {
 }
 
 type CClient = {
+	id: string;
 	name: string;
 	color: string;
 }
@@ -34,6 +35,7 @@ type CRoom = {
 
 function convertClient(client: Client | undefined): CClient {
 	return ({
+		id: client?.UUID || "-1",
 		name: client?.name || "Unknown",
 		color: client?.color || "#000000"
 	});
