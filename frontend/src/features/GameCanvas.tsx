@@ -6,6 +6,13 @@ import { ClientGame } from "../scripts/ClientGame.ts"
 import { draw } from "../scripts/Draw.ts"
 // import { getSocket } from "./Socket.ts";
 
+import type { ServerMessage, ClientMessage } from "/app/shared/types.ts"
+import { subscribe, send } from "../scripts/socket.ts";
+
+import { useClient, useRoom } from "../scripts/store.ts";
+
+import NameTag from "../components/NameTag.tsx";
+
 type Cell = number;
 
 type Piece = {
@@ -18,11 +25,16 @@ const REAL_WIDTH: number = GAME_CONFIG.WIDTH * CONFIG.CELL_SIZE;
 const REAL_HEIGHT: number = GAME_CONFIG.HEIGHT * CONFIG.CELL_SIZE;
 
 export default function GameCanvas() {
+
+	const {client, setClient} = useClient();
+	const {room} = useRoom();
+
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const socketRef = useRef<WebSocket | null>(null);
 	const paletteRef = useRef(0);
 
 	const clientGameRef = useRef<ClientGame>(new ClientGame());
+
+	const [states, setStates] = useState({});
 
 	let lastScore = -1;
 	const [score, setScore] = useState(0);
@@ -31,19 +43,18 @@ export default function GameCanvas() {
 	 *  WebSocket
 	 */
 	useEffect(() => {
-		if (socketRef.current) return;
+		const unsub0 = subscribe((msg: ServerMessage) => {
+			setStates(msg.states);
+			clientGameRef.current.applyServerState(msg.states[client.id]);
+		}, "STATE");
 
-		// socketRef.current = getSocket()createSocket((msg: any) => {
-		// 	if (msg.type === "STATE") {
-		// 		clientGameRef.current.applyServerState(msg.state);
-		// 	} else if (msg.type === "ACK") {
-		// 		clientGameRef.current.confirmInput();
-		// 	}
-		// });
+		const unsub1 = subscribe((msg: ServerMessage) => {
+			clientGameRef.current.confirmInput();
+		}, "ACK");
 
 		return () => {
-			socketRef.current?.close();
-			socketRef.current = null;
+			unsub0();
+			unsub1();
 		};
 	}, []);
 
@@ -53,14 +64,12 @@ export default function GameCanvas() {
 	function registerGameInput(input: any) {
 		if (!input.type)
 			return ;
-		socketRef.current.send(JSON.stringify(input));
+		send({type: "GAME_INPUT", input: input});
 		clientGameRef.current.applyLocalInput(input);
 	}
 
 	useEffect(() => {
 		const handleKey = (e: KeyboardEvent) => {
-			if (!socketRef.current) return;
-
 			const map: Record<string, string> = {
 				ArrowLeft: "LEFT",
 				ArrowRight: "RIGHT",
@@ -88,7 +97,6 @@ export default function GameCanvas() {
 		const threshold = 30;
 
 		const onClick = (e: TouchEvent) => {
-			console.log("TourchStart");
 			startX = e.touches[0].clientX;
 			startY = e.touches[0].clientY;
 		};
@@ -139,23 +147,50 @@ export default function GameCanvas() {
 		loop();
 	}, []);
 
+	const [scores, setScores] = useState([]);
+
+	useEffect(() => {
+		var out = [];
+
+		Object.keys(states).forEach(function(key, index) {
+			const client = room.clients.filter((client) => {
+				return (client.id === key);
+			})[0];
+			if (!client) {
+				console.log(room.clients);
+				console.log("Zebi");
+				return ;
+			}
+			out.push(<div key={index}><NameTag client={client} /> {states[key].score}pts </div>);
+			// out.push(<p> {client.name}: {states[key].score} </p>);
+			// TODO Afficher le nom du joueur / stocker les IDs des joueurs
+		});
+
+		setScores(out);
+	}, [states]);
+
 	/**
 	 *  HTML return
 	 */
 	return (
 		<div>
-			<h2>Score: { clientGameRef.current.game.score}</h2>
+			<h2>Score: {clientGameRef.current.game.score}</h2>
 			<canvas
 				ref={canvasRef}
 				width={REAL_WIDTH}
 				height={REAL_HEIGHT}
 			/>
-			<div className="controls">
-				<button onClick={() => registerGameInput({ type: "LEFT" })}>⬅️</button>
-				<button onClick={() => registerGameInput({ type: "RIGHT" })}>➡️</button>
-				<button onClick={() => registerGameInput({ type: "ROTATE"})}>🔄</button>
-				<button onClick={() => registerGameInput({ type: "DOWN" })}>⬇️</button>
-			</div>
+			{
+				scores
+			}
+			{
+				// <div className="controls">
+				// 	<button onClick={() => registerGameInput({ type: "LEFT" })}>⬅️</button>
+				// 	<button onClick={() => registerGameInput({ type: "RIGHT" })}>➡️</button>
+				// 	<button onClick={() => registerGameInput({ type: "ROTATE"})}>🔄</button>
+				// 	<button onClick={() => registerGameInput({ type: "DOWN" })}>⬇️</button>
+				// </div>
+			}
 		</div>
 	);
 }

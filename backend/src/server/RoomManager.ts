@@ -1,13 +1,16 @@
 import { ClientManager } from "./ClientManager"
+import { Game } from "/app/shared/game/Game.ts"
 
 function randomID() {
 	return (Math.random().toString(16).slice(2, 10).toUpperCase());
 }
 
 export type Room = {
-	UUID:		string;
-	clients:	string[];
-	owner:		string;
+	UUID:			string;
+	clients:		string[];
+	owner:			string;
+	games:			Map<string, Game>
+	gameStarted:	boolean;
 };
 
 export class RoomManager {
@@ -19,7 +22,9 @@ export class RoomManager {
 		const room: Room = {
 			UUID: UUID,
 			clients: [],
-			owner: ownerID
+			owner: ownerID,
+			games: new Map<string, Game>(),
+			gameStarted: false
 		};
 
 		this._rooms.set(UUID, room);
@@ -33,6 +38,7 @@ export class RoomManager {
 		if (room.clients.includes(clientID))
 			return (true);
 		room.clients.push(clientID);
+		room.games.set(clientID, new Game());
 		return (true);
 	}
 
@@ -43,6 +49,7 @@ export class RoomManager {
 		room.clients = room.clients.filter((client) => {
 			return (client !== clientID);
 		});
+		room.games.delete(clientID);
 		if (room.clients.length < 1)
 			this._rooms.delete(roomID);
 		return (true);

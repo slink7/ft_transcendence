@@ -7,8 +7,9 @@ export class Piece {
 
 
 	constructor(x0: number = 0, y0: number = 0) {
-		this.shape = this.cloneShape(GAME_CONFIG.SHAPES[Math.floor(Math.random() * GAME_CONFIG.SHAPES.length)]);
-		let color: number = Math.floor(Math.random() * GAME_CONFIG.SHAPES.length) + 1;
+		const shapeIndex = Math.floor(Math.random() * GAME_CONFIG.SHAPES.length);
+		this.shape = this.cloneShape(GAME_CONFIG.SHAPES[shapeIndex]);
+		let color: number = shapeIndex + 1;
 		this.shape.forEach((row, y) => {
 			row.forEach((value, x) => {
 				this.shape[y][x] = value * color;

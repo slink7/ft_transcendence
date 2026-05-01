@@ -10,16 +10,14 @@ type Player = {
 export class GameManager {
 	private players: Map<string, Player> = new Map();
 
-	addPlayer(ws: WebSocket): string {
-		const id = crypto.randomUUID();
-
-		this.players.set(id, {
-			id,
+	addPlayer(clientID: string, ws: WebSocket): string {
+		this.players.set(clientID, {
+			id: clientID,
 			ws,
 			game: new Game()
 		});
 
-		return id;
+		return clientID;
 	}
 
 	removePlayer(id: string) {
@@ -35,20 +33,11 @@ export class GameManager {
 		game.applyInput(msg);
 	}
 
-	update() {
-		this.players.forEach((player) => {
-			player.game.update();
-		});
-	}
-
-	broadcast() {
-		this.players.forEach((player) => {
-			const state = player.game.getState();
-
-			player.ws.send(JSON.stringify({
-				type: "STATE",
-				state
-			}));
-		});
+	update(UUID: string) {
+		const player = this.players.get(UUID);
+		if (!player)
+			return ;
+		player.game.update();
+		return (player.game.getState());
 	}
 }

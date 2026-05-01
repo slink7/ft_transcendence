@@ -13,7 +13,6 @@ httpServer.listen(CONFIG.PORT, () => {
 	console.log(`Server running on http://localhost:${CONFIG.PORT}`);
 });
 
-setInterval(() => {
-	gameManager.update();
-	gameManager.broadcast();
-}, CONFIG.TICK_RATE);
+// setInterval(() => {
+// 	gameManager.update();
+// }, CONFIG.TICK_RATE);
