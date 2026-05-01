@@ -3,32 +3,41 @@ services:
     build: ./api
     container_name: "api"
     ports: 
-      - "3001:3001"
-    env_file:
-      - .env
+      - "${API_PORT:-3001}:${API_PORT:-3001}"
+    environment:
+      - API_PORT=${API_PORT:-3001}
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-123456}
+      - POSTGRES_USER=${POSTGRES_USER:-basic}
+      - POSTGRES_DB=${POSTGRES_DB:-transcendence}
+    depends_on:
+      - database
   database:
     build: ./database
     container_name: "database"
     ports: 
       - "5432:5432"
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-123456}
+      - POSTGRES_USER=${POSTGRES_USER:-basic}
+      - POSTGRES_DB=${POSTGRES_DB:-transcendence}
   backend:
     build: ./backend
     ports:
-      - "$PORT:$PORT"
+      - "${PORT:-3000}:${PORT:-3000}"
     volumes:
       - ./backend:/app
       - ./shared:/app/shared
       - /app/node_modules
     environment:
-      - PORT=$PORT
-      - TICK_RATE=$TICK_RATE
+      - PORT=${PORT:-3000}
+      - TICK_RATE=${TICK_RATE:-1000}
     command: npm run dev
 
   frontend:
     environment:
-      - VITE_WS_URL=$WS_URL
+      - VITE_WS_URL=${WS_URL:-ws://localhost:3000}
     build: ./frontend
     ports:
       - "5173:5173"
@@ -37,3 +46,54 @@ services:
       - ./shared:/app/shared
       - /app/node_modules
     command: npm run dev
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.16.0
+    container_name: "postgres-exporter"
+    depends_on:
+      - database
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER:-basic}:${POSTGRES_PASSWORD:-123456}@database:5432/${POSTGRES_DB:-transcendence}?sslmode=disable"
+    volumes:
+      - ./monitoring/postgres-exporter/queries.yml:/etc/postgres_exporter/queries.yml:ro
+    command:
+      - "--extend.query-path=/etc/postgres_exporter/queries.yml"
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.25.0
+    container_name: "blackbox-exporter"
+    volumes:
+      - ./monitoring/blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: "prometheus"
+    depends_on:
+      - backend
+      - frontend
+      - wextrapi
+      - postgres-exporter
+      - blackbox-exporter
+    ports:
+      - "127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: "grafana"
+    depends_on:
+      - prometheus
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-3002}:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-change_me}
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro

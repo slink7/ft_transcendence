@@ -2,6 +2,11 @@ import { WebSocketServer, WebSocket } from "ws";
 
 import { ClientMessage, ServerMessage } from "../../shared/types";
 
+import {
+	recordReconnect,
+	recordWebSocketMessage,
+	setRuntimeMetrics,
+} from "../monitoring/metrics";
 import { Client, ClientManager } from "./ClientManager";
 import { Room, RoomManager } from "./RoomManager";
 import { GameManager } from "../game/GameManager"
@@ -48,6 +53,13 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 	const clientManager = new ClientManager();
 	const roomManager = new RoomManager();
 	const gameManager = new GameManager();
+
+	function refreshRuntimeMetrics() {
+		const connectedClients = Array.from(clientManager.getClients().values())
+			.filter((client) => client.connected).length;
+
+		setRuntimeMetrics(connectedClients, roomManager.getRooms().size);
+	}
 
 	function convertRoom(room: Room): CRoom {
 		const clients: CClient[] = room.clients.map((UUID: string) => {
@@ -105,12 +117,15 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 			}
 
 			console.log("Received: type ", msg.type);
+			recordWebSocketMessage(msg.type);
 
 			if (msg.type === "HELLO") {
 				if (msg.clientID) {
 					const client = clientManager.reconnect(msg.clientID, ws);
 					if (client) {
 						UUID = client.UUID;
+						recordReconnect();
+						refreshRuntimeMetrics();
 						return (send(ws, { type: "WELCOME", clientID: UUID }));
 					}
 				}
@@ -120,6 +135,7 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 				);
 				console.log("Connection: ", client.UUID, client.name);
 				UUID = client.UUID;
+				refreshRuntimeMetrics();
 
 				return (send(ws, { type: "WELCOME", clientID: UUID }));
 			}
@@ -158,6 +174,7 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 			if (msg.type === "CREATE_ROOM") {
 				const roomID = roomManager.createRoom(UUID);
 
+				refreshRuntimeMetrics();
 				return (send(ws, { type: "CREATED_ROOM", roomID: roomID }));
 			}
 
@@ -179,6 +196,7 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 					return (send(ws, cantJoin));
 				client.roomID = roomID;
 				broadcastRoomInfo(roomID);
+				refreshRuntimeMetrics();
 				return ;
 			}
 
@@ -193,6 +211,7 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 				broadcastRoomInfo(roomID);
 				if (room.clients.length < 1)
 					roomManager.deleteRoom(roomID);
+				refreshRuntimeMetrics();
 				return (send(ws, { type: "ACK" }));
 			}
 
@@ -255,11 +274,14 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 					return ;
 				delete expiredClient.roomID;
 				broadcastRoomInfo(roomID);
+				refreshRuntimeMetrics();
 			});
+			refreshRuntimeMetrics();
 		});
 	});
 
 	setInterval(() => {
 		clientManager.cleanup();
+		refreshRuntimeMetrics();
 	}, 5000);
 }

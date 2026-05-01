@@ -1,0 +1,41 @@
+wex_table_rows:
+  query: |
+    SELECT 'player' AS table_name, count(*)::float AS row_count FROM player
+    UNION ALL SELECT 'game' AS table_name, count(*)::float AS row_count FROM game
+    UNION ALL SELECT 'score' AS table_name, count(*)::float AS row_count FROM score
+    UNION ALL SELECT 'theme' AS table_name, count(*)::float AS row_count FROM theme
+    UNION ALL SELECT 'friend' AS table_name, count(*)::float AS row_count FROM friend
+    UNION ALL SELECT 'chat' AS table_name, count(*)::float AS row_count FROM chat
+  metrics:
+    - table_name:
+        usage: "LABEL"
+        description: "Project table name."
+    - row_count:
+        usage: "GAUGE"
+        description: "Number of rows in project tables."
+
+wex_game_stats:
+  query: |
+    SELECT
+      COALESCE(max(score), 0)::float AS max_score,
+      COALESCE(sum(score), 0)::float AS total_score,
+      COALESCE(sum(line_cleared), 0)::float AS total_lines_cleared,
+      count(*)::float AS recorded_scores,
+      COALESCE(sum(CASE WHEN win THEN 1 ELSE 0 END), 0)::float AS recorded_wins
+    FROM score
+  metrics:
+    - max_score:
+        usage: "GAUGE"
+        description: "Highest recorded game score."
+    - total_score:
+        usage: "GAUGE"
+        description: "Total score across all recorded games."
+    - total_lines_cleared:
+        usage: "GAUGE"
+        description: "Total cleared lines across all recorded games."
+    - recorded_scores:
+        usage: "GAUGE"
+        description: "Number of recorded score rows."
+    - recorded_wins:
+        usage: "GAUGE"
+        description: "Number of recorded wins."

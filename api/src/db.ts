@@ -2,9 +2,9 @@ import { Pool } from "pg";
 import { CONFIG } from "./config.js";
 
 export const pool = new Pool({
-    user: 'basic',
-    password: '123456',
-    host: 'database',
-    port: 5432,
-    database: 'transcendence',
+    user: process.env.POSTGRES_USER || "basic",
+    password: process.env.POSTGRES_PASSWORD || "123456",
+    host: process.env.POSTGRES_HOST || "database",
+    port: Number(process.env.POSTGRES_PORT || 5432),
+    database: process.env.POSTGRES_DB || "transcendence",
 });
