@@ -21,24 +21,24 @@ export default function ColorSetter() {
 	}
 
 	return (
-		<>
-			<button onClick={() => {
+		<div className="flex items-center gap-4">
+			<button className="bg-orange-500 shadow-sm transition hover:bg-orange-600 text-yellow-50 py-2 px-4 rounded" onClick={() => {
 				setInput(randomColor());
 			}}>
 				{t('color.generate')}
 			</button>
 
-			<form onSubmit={(event) => {
+			<form className="flex items-stretch border-2 border-black-800 rounded" onSubmit={(event) => {
 				event.preventDefault();
 				setColor(input);
 			}}>
-				<input
+				<input className="cursor-pointer appearance-none"
 					value={input}
 					onChange={(e) => setInput(e.target.value)}
 					type="color"
 				/>
-				<button type="submit"> {t('color.set')} </button>
+				<button className="bg-blue-500 transition hover:bg-blue-600 text-yellow-50 px-4" type="submit"> {t('color.set')} </button>
 			</form>
-		</>
+		</div>
 	);
 }

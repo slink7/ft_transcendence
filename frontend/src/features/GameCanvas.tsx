@@ -173,8 +173,8 @@ export default function GameCanvas() {
 	 *  HTML return
 	 */
 	return (
-		<div>
-			<h2>Score: {clientGameRef.current.game.score}</h2>
+		<div className="flex flex-col items-center gap-4">
+			<h2 className="text-2xl font-bold bg-yellow-400 rounded-2xl px-4 py-2">Score : {clientGameRef.current.game.score}</h2>
 			<canvas
 				ref={canvasRef}
 				width={REAL_WIDTH}
@@ -184,12 +184,12 @@ export default function GameCanvas() {
 				scores
 			}
 			{
-				// <div className="controls">
-				// 	<button onClick={() => registerGameInput({ type: "LEFT" })}>⬅️</button>
-				// 	<button onClick={() => registerGameInput({ type: "RIGHT" })}>➡️</button>
-				// 	<button onClick={() => registerGameInput({ type: "ROTATE"})}>🔄</button>
-				// 	<button onClick={() => registerGameInput({ type: "DOWN" })}>⬇️</button>
-				// </div>
+				<div className="controls flex gap-4">
+					<button className="transition text-4xl rounded" onClick={() => registerGameInput({ type: "LEFT" })}>⬅️</button>
+					<button className="transition text-4xl rounded" onClick={() => registerGameInput({ type: "RIGHT" })}>➡️</button>
+					<button className="transition text-4xl rounded" onClick={() => registerGameInput({ type: "ROTATE"})}>🔄</button>
+					<button className="transition text-4xl rounded" onClick={() => registerGameInput({ type: "DOWN" })}>⬇️</button>
+				</div>
 			}
 		</div>
 	);

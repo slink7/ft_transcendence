@@ -6,7 +6,6 @@ export default function Game() {
 
 	return (
 		<div>
-			<h1> {t('game.title')} </h1>
 			<GameCanvas />
 		</div>
 	);

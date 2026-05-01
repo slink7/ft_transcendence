@@ -10,14 +10,16 @@ import Room from "../pages/Room.tsx"
 export default function Router() {
 	return (
 		<BrowserRouter>
-			<Header/>
-			<Routes>
-				<Route path="/" element={<Home />}/>
-				<Route path="/room/:roomID" element={<Room />}/>
-				<Route path="/game" element={<Game />}/>
-				<Route path="*" element={<Navigate to="/"/>}/>
-			</Routes>
-			<Footer/>
+			<div className="w-screen h-screen flex flex-col gap-8 bg-yellow-50 font-wide">
+				<Header/>
+				<Routes>
+					<Route path="/" element={<Home />}/>
+					<Route path="/room/:roomID" element={<Room />}/>
+					<Route path="/game" element={<Game />}/>
+					<Route path="*" element={<Navigate to="/"/>}/>
+				</Routes>
+				<Footer/>
+			</div>
 		</BrowserRouter>
 	);
 }

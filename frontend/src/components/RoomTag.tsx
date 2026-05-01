@@ -21,7 +21,7 @@ export default function RoomTag({room, as = "span", clientCount = false}: Props)
 
 	return (
 		<Tag>
-			<NameTag client={room.owner} as="span"/>'s room {clientCount && <span> ({room.clients.length}) </span>}
+			<NameTag client={room.owner} as="span"/>'s room {clientCount && <span> (connected : {room.clients.length}) </span>}
 		</Tag>
 	);
 }

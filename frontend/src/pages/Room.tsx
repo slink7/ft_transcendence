@@ -15,7 +15,7 @@ export default function Room() {
 	const { roomID } = useParams();
 	const navigate = useNavigate();
 	const {room, setRoom} = useRoom();
-	const {t, i18n} = useTranslation();
+	const {t} = useTranslation();
 
 	useEffect(() => {
 		send({type: "JOIN_ROOM", roomID: roomID});
@@ -41,8 +41,10 @@ export default function Room() {
 	}, []);
 
 	return (
-		<div>
-			<RoomTag room={room} as="h2"/>
+		<div className="grow text-center flex flex-col gap-10 items-center justify-center">
+			<div className="text-2xl font-bold">
+				<RoomTag room={room} as="h2"/>
+			</div>
 			<p>
 				<span> {t('room.id')} {roomID} </span>
 				<button onClick={() => {
@@ -57,20 +59,23 @@ export default function Room() {
 						<NameTag key={k} client={client} as="h3"/>
 					))
 				}
-			<button onClick={() => send({ type: "START_GAME" })}>
+			<button className="bg-orange-500 shadow-sm transition hover:bg-orange-600 text-yellow-50 py-2 px-4 rounded"
+				onClick={() => send({ type: "START_GAME" })}>
 				{t('room.start')}
 			</button>
-			<button onClick={() => {
-				navigate("/")
-			}}>
-				{t('room.home')}
-			</button>
-			<button onClick={() => {
-				send({ type: "QUIT_ROOM" });
-				navigate("/")
-			}}>
-				{t('room.quit')}
-			</button>
+			<div className="flex gap-4">
+				<button className="bg-blue-500 shadow-sm transition hover:bg-blue-600 text-yellow-50 py-2 px-4 rounded" onClick={() => {
+					navigate("/")
+				}}>
+					{t('room.home')}
+				</button>
+				<button className="bg-dark-red-500 shadow-sm transition hover:bg-dark-red-600 text-yellow-50 py-2 px-4 rounded" onClick={() => {
+					send({ type: "QUIT_ROOM" });
+					navigate("/")
+				}}>
+					{t('room.quit')}
+				</button>
+			</div>
 		</div>
 	);
 }
