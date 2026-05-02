@@ -5,8 +5,8 @@ export class ClientGame {
   game: Game;
   pendingInputs: any[] = [];
 
-  constructor() {
-    this.game = new Game();
+  constructor(seed: string) {
+    this.game = new Game(seed);
   }
 
   applyServerState(state: any) {

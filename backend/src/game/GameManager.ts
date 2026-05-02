@@ -10,11 +10,11 @@ type Player = {
 export class GameManager {
 	private players: Map<string, Player> = new Map();
 
-	addPlayer(clientID: string, ws: WebSocket): string {
+	addPlayer(clientID: string, ws: WebSocket, seed: string): string {
 		this.players.set(clientID, {
 			id: clientID,
 			ws,
-			game: new Game()
+			game: new Game(seed)
 		});
 
 		return clientID;
