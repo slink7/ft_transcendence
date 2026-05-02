@@ -9,8 +9,6 @@ export const PALETTES: string[][] = [
 	["#2e1f27", "#854d27", "#dd7230", "#f4c95d", "#e7e393"], //Summer
 ]
 
-const REAL_WIDTH: number = GAME_CONFIG.WIDTH * CONFIG.CELL_SIZE;
-const REAL_HEIGHT: number = GAME_CONFIG.HEIGHT * CONFIG.CELL_SIZE;
 
 function darkenColor(color: string, amount: number = 0.3): string {
 	const hex = color.replace("#", "");
@@ -26,7 +24,9 @@ function darkenColor(color: string, amount: number = 0.3): string {
 	return `rgb(${newR}, ${newG}, ${newB})`;
 }
 
-export function draw(canvas: Canvas, ctx: CanvasRenderingContext2D, game: Game, paletteID: number) {
+export function draw(canvas: Canvas, ctx: CanvasRenderingContext2D, game: Game, paletteID: number, cell_size: number) {
+	const REAL_WIDTH: number = game.board.width * cell_size;
+	const REAL_HEIGHT: number = game.board.height * cell_size;
 	function drawGrid(
 		grid: Cell[][],
 		offsetX: number,
@@ -37,8 +37,8 @@ export function draw(canvas: Canvas, ctx: CanvasRenderingContext2D, game: Game, 
 			row.forEach((cell, x) => {
 				if (!cell) return;
 
-				const realX = (offsetX + x) * CONFIG.CELL_SIZE;
-				const realY = (offsetY + y) * CONFIG.CELL_SIZE;
+				const realX = (offsetX + x) * cell_size;
+				const realY = (offsetY + y) * cell_size;
 
 				const color1 = palette[(cell - 1) % palette.length];
 				const color2 = darkenColor(color1, 0.3);
@@ -49,17 +49,17 @@ export function draw(canvas: Canvas, ctx: CanvasRenderingContext2D, game: Game, 
 					0.2,
 					realX,
 					realY,
-					1.4 * CONFIG.CELL_SIZE
+					1.4 * cell_size
 				);
 
 				grad.addColorStop(0, color1);
 				grad.addColorStop(1, color2);
 
 				ctx.fillStyle = grad;
-				ctx.fillRect(realX, realY, CONFIG.CELL_SIZE, CONFIG.CELL_SIZE);
+				ctx.fillRect(realX, realY, cell_size, cell_size);
 
 				ctx.strokeStyle = color2;
-				ctx.strokeRect(realX, realY, CONFIG.CELL_SIZE, CONFIG.CELL_SIZE);
+				ctx.strokeRect(realX, realY, cell_size, cell_size);
 			});
 		});
 	}
@@ -69,10 +69,10 @@ export function draw(canvas: Canvas, ctx: CanvasRenderingContext2D, game: Game, 
 	// grid lines
 	ctx.fillStyle = "#404040";
 	for (let y = 0; y <= GAME_CONFIG.HEIGHT; y++) {
-		ctx.fillRect(0, y * CONFIG.CELL_SIZE - 1, REAL_WIDTH, 2);
+		ctx.fillRect(0, y * cell_size - 1, REAL_WIDTH, 2);
 	}
 	for (let x = 0; x <= GAME_CONFIG.WIDTH; x++) {
-		ctx.fillRect(x * CONFIG.CELL_SIZE - 1, 0, 2, REAL_HEIGHT);
+		ctx.fillRect(x * cell_size - 1, 0, 2, REAL_HEIGHT);
 	}
 
 	const palette = PALETTES[paletteID];

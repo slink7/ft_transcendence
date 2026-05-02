@@ -13,6 +13,8 @@ import { useClient, useRoom } from "../scripts/store.ts";
 
 import NameTag from "../components/NameTag.tsx";
 
+import Canvas from "./Canvas.tsx";
+
 type Cell = number;
 
 type Piece = {
@@ -29,7 +31,7 @@ export default function GameCanvas() {
 	const {client, setClient} = useClient();
 	const {room} = useRoom();
 
-	const canvasRef = useRef<HTMLCanvasElement>(null);
+	// const canvasRef = useRef<HTMLCanvasElement>(null);
 	const paletteRef = useRef(0);
 
 	const clientGameRef = useRef<ClientGame>(new ClientGame(room.seed));
@@ -123,30 +125,6 @@ export default function GameCanvas() {
 		};
 	}, []);
 
-	/**
-	 *  Rendering
-	 */
-	useEffect(() => {
-		const canvas = canvasRef.current!;
-		const ctx = canvas.getContext("2d")!;
-
-		function loop() {
-
-			const game = clientGameRef.current.game;
-			if (game.board && game.currentPiece)
-				draw(canvas, ctx, game, paletteRef.current);
-
-			if (game.score != lastScore) {
-				setScore(game.score);
-				lastScore = game.score;
-			}
-
-			requestAnimationFrame(loop);
-		}
-
-		loop();
-	}, []);
-
 	const [scores, setScores] = useState([]);
 
 	useEffect(() => {
@@ -167,8 +145,6 @@ export default function GameCanvas() {
 					{states[key].score}pts 
 				</div>
 			);
-			// out.push(<p> {client.name}: {states[key].score} </p>);
-			// TODO Afficher le nom du joueur / stocker les IDs des joueurs
 		});
 
 		setScores(out);
@@ -180,11 +156,7 @@ export default function GameCanvas() {
 	return (
 		<div className="flex flex-col items-center gap-4">
 			<h2 className="text-2xl font-bold bg-yellow-400 rounded-2xl px-4 py-2">Score : {clientGameRef.current.game.score}</h2>
-			<canvas
-				ref={canvasRef}
-				width={REAL_WIDTH}
-				height={REAL_HEIGHT}
-			/>
+			<Canvas cell_size={30} game={clientGameRef.current.game} palette={paletteRef.current} />
 			{
 				scores
 			}
