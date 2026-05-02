@@ -32,7 +32,7 @@ export default function GameCanvas() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const paletteRef = useRef(0);
 
-	const clientGameRef = useRef<ClientGame>(new ClientGame());
+	const clientGameRef = useRef<ClientGame>(new ClientGame(room.seed));
 
 	const [states, setStates] = useState({});
 

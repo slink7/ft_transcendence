@@ -29,8 +29,10 @@ export default function Room() {
 		}, "ROOM_INFO");
 
 		const unsubStart = subscribe((msg: ServerMessage) => {
-			if (msg.type === "GAME_START")
+			if (msg.type === "GAME_START") {
+				setRoom({ seed: msg.seed });
 				navigate('/game');
+			}
 		}, "GAME_START");
 
 		return (() => {

@@ -1,4 +1,4 @@
-class Sfc32 {
+export class Sfc32 {
     private static _xfnv1a(str: string): () => number {
         let h = 2166136261 >>> 0;
 

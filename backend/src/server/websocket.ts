@@ -217,9 +217,11 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 
 			if (msg.type === "START_GAME") {
 				const roomID = client?.roomID || "";
+				const seed = crypto.randomUUID();
 				broadcastRoom(roomID, () => {
 					return ({
 						type: "GAME_START",
+						seed: seed
 					});
 				});
 				const room = roomManager.getRoom(roomID);
@@ -229,7 +231,7 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 					const cli = clientManager.getClient(clientID);
 					if (!cli)
 						return ;
-					gameManager.addPlayer(cli.UUID, cli.socket);
+					gameManager.addPlayer(cli.UUID, cli.socket, seed);
 				})
 				setTimeout(() => {
 					const timerID = setInterval(() => {

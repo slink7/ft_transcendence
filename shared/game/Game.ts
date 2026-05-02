@@ -1,6 +1,7 @@
 
-import { Board } from "./Board.ts"
-import { Piece } from "./Piece.ts"
+import { Board } from "./Board.ts";
+import { Piece } from "./Piece.ts";
+import { Sfc32 } from "./Sfc32.ts";
 
 export class Game {
 	score: number;
@@ -8,13 +9,16 @@ export class Game {
 	board: Board;
 	currentPiece: Piece;
 
+	prng: Sfc32;
+
 	frame: number;
 
-	constructor() {
+	constructor(seed: string = "") {
 		this.frame = 0;
 		this.score = 0;
 		this.board = new Board();
-		this.currentPiece = new Piece(3, 0);
+		this.prng = new Sfc32(seed);
+		this.currentPiece = new Piece(3, 0, this.prng.next());
 	}
 
 	update() {
@@ -39,7 +43,7 @@ export class Game {
 		});
 		let clearedLines: number = this.clearLines();
 		this.score += 10 * clearedLines * clearedLines;
-		this.currentPiece = new Piece();
+		this.currentPiece = new Piece(3, 0, this.prng.next());
 		if (!this.isValidPosition(this.currentPiece, 0, 0))
 			this.reset();
 	}
