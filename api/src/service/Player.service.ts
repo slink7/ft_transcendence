@@ -35,6 +35,20 @@ export async function selectPlayerLogin(value:any[]) {
                 last_sign,
                 id_theme
                 FROM player
-                WHERE player.=$1`;
-    return await pool.query(query, [value]);
+                WHERE player.email=$1 AND player.hash_pwd=$2`;
+    return await pool.query(query, value);
+}
+
+
+export async function insertPlayer(value:any[]) {
+    const query = `INSERT INTO player (
+                    username,
+                    email,
+                    hash_pwd,
+                    profile_color,
+                    last_sign,
+                    id_theme
+                )
+                VALUES ($1, $2, $3, $4,NULL, 1)`;
+    return await pool.query(query, value);
 }
