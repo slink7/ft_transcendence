@@ -47,7 +47,6 @@ export class RoomManager {
 		room.clients = room.clients.filter((client) => {
 			return (client !== clientID);
 		});
-		room.games.delete(clientID);
 		if (room.clients.length < 1)
 			this._rooms.delete(roomID);
 		return (true);
