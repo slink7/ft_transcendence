@@ -222,6 +222,9 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 					return ;
 				if (room.owner !== UUID)
 					return ;
+				if (room.gameStarted)
+					return ;
+				room.gameStarted = true;
 				const seed = crypto.randomUUID();
 				broadcastRoom(roomID, () => {
 					return ({
@@ -236,7 +239,7 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 					gameManager.addPlayer(cli.UUID, cli.socket, seed);
 				})
 				setTimeout(() => {
-					const timerID = setInterval(() => {
+					room.timerID = setInterval(() => {
 						const states = {};
 						room.clients.forEach((clientID: string) => {
 							states[clientID] = gameManager.update(clientID);
