@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { insertPlayer, selectAllPlayer, selectPlayer, selectPlayerLogin } from "../service/Player.service.js";
 import { Player, parsePlayer } from "../class/Player.js"
+import { log } from "node:console";
 
 
 export async function getAllPlayer(req: Request, res: Response) {
@@ -83,12 +84,13 @@ export async function addPlayer(req: Request, res: Response) {
         const values = [username, email, pwd, profile_color];
         console.log(`try add Player ${username}`);
         var playerResult = await insertPlayer(values);
-        if (!playerResult.rows || playerResult.rows.length === 0) {
+        if (!playerResult.rows || playerResult.rowCount === 0) {
+            console.log(playerResult);
             return res.status(500).send({
                 error: "Player could not be created"
             });
         }
-        res.status(201).send(playerResult.rows[0]);
+        res.status(201).send(`player ${username} succesfully created`);
     }
     catch (err:any) {
 
