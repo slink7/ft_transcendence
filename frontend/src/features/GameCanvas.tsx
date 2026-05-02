@@ -184,19 +184,23 @@ export default function GameCanvas() {
 					palette={paletteRef.current}
 				/>
 				<div>
-					<div> Leader: <NameTag client={leader.current} /></div>
 					{
-						secondaryGame.current &&
-						<Canvas
-							cell_size={10}
-							game={secondaryGame.current}
-							palette={paletteRef.current}
-						/>
+						room.clients.length > 1 && <>
+							<div> Leader: <NameTag client={leader.current} /></div>
+							{
+								secondaryGame.current &&
+								<Canvas
+									cell_size={10}
+									game={secondaryGame.current}
+									palette={paletteRef.current}
+								/>
+							}
+						</>
 					}
 				</div>
 			</div>
 			{
-				scores
+				room.clients.length > 1 && scores
 			}
 			{
 				<div className="controls flex gap-4">
