@@ -15,7 +15,15 @@ import NameTag from "../components/NameTag.tsx";
 
 import Canvas from "./Canvas.tsx";
 
+import { Game } from "/app/shared/game/Game.ts";
+
 type Cell = number;
+
+type Client = {
+	id: string | null;
+	name: string;
+	color: string;
+}
 
 type Piece = {
 	shape: Cell[][];
@@ -35,11 +43,26 @@ export default function GameCanvas() {
 	const paletteRef = useRef(0);
 
 	const clientGameRef = useRef<ClientGame>(new ClientGame(room.seed));
+	const secondaryGame = useRef<Game>(new Game());
+	const leaderID = useRef("");
+	const leader = useRef<Client>({id:"", name:"", color:""});
 
-	const [states, setStates] = useState({});
+	const [states, setStates] = useState([]);
 
 	let lastScore = -1;
 	const [score, setScore] = useState(0);
+
+	useEffect(() => {
+		if (states.length <= 0)
+			return ;
+		leaderID.current = Object.keys(states).reduce((maxID, ID) => {
+			return (states[ID].score > states[maxID].score ? ID : maxID);
+		});
+		leader.current = room.clients.filter((client) => {
+			return (client.id === leaderID.current);
+		})[0];
+		secondaryGame.current.setState(states[leaderID.current]);
+	}, [states]);
 
 	/**
 	 *  WebSocket
@@ -135,14 +158,12 @@ export default function GameCanvas() {
 				return (client.id === key);
 			})[0];
 			if (!client) {
-				console.log(room.clients);
-				console.log("Zebi");
 				return ;
 			}
 			out.push(
 				<div key={index} style={{backgroundColor: ((states[key].isDead) ? "#FF7F7F" : "#7FFF7F")}}>
 					<NameTag client={client} />
-					{states[key].score}pts 
+					{states[key].score}pts
 				</div>
 			);
 		});
@@ -156,7 +177,24 @@ export default function GameCanvas() {
 	return (
 		<div className="flex flex-col items-center gap-4">
 			<h2 className="text-2xl font-bold bg-yellow-400 rounded-2xl px-4 py-2">Score : {clientGameRef.current.game.score}</h2>
-			<Canvas cell_size={30} game={clientGameRef.current.game} palette={paletteRef.current} />
+			<div style={{display: "flex", gap: "10px"}}>
+				<Canvas
+					cell_size={20}
+					game={clientGameRef.current.game}
+					palette={paletteRef.current}
+				/>
+				<div>
+					<div> Leader: <NameTag client={leader.current} /></div>
+					{
+						secondaryGame.current &&
+						<Canvas
+							cell_size={10}
+							game={secondaryGame.current}
+							palette={paletteRef.current}
+						/>
+					}
+				</div>
+			</div>
 			{
 				scores
 			}

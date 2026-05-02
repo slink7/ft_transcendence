@@ -96,7 +96,7 @@ export function draw(canvas: Canvas, ctx: CanvasRenderingContext2D, game: Game, 
 	if (game.isDead) {
 		ctx.fillStyle = 'rgba(0,0,0,0.5)';
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
-		ctx.font = "48px serif";
+		ctx.font = (REAL_WIDTH * 45 / 300).toString(10) + "px serif";
 		ctx.fillText("Game Over", 10, canvas.height / 2);
 	}
 }

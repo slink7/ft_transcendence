@@ -34,7 +34,7 @@ export default function Canvas({cell_size, game, palette = 0}: Props) {
 	}, []);
 
 	return (
-		<canvas
+		<canvas style={{width: REAL_WIDTH, height: REAL_HEIGHT}}
 			ref={canvasRef}
 			width={REAL_WIDTH}
 			height={REAL_HEIGHT}
