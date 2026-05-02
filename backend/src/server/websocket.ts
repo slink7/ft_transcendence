@@ -217,6 +217,11 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 
 			if (msg.type === "START_GAME") {
 				const roomID = client?.roomID || "";
+				const room = roomManager.getRoom(roomID);
+				if (!room)
+					return ;
+				if (room.owner !== UUID)
+					return ;
 				const seed = crypto.randomUUID();
 				broadcastRoom(roomID, () => {
 					return ({
@@ -224,9 +229,6 @@ export function createWebSocketServer(server: any, _gameManager?: unknown) {
 						seed: seed
 					});
 				});
-				const room = roomManager.getRoom(roomID);
-				if (!room)
-					return ;
 				room.clients.forEach((clientID: string) => {
 					const cli = clientManager.getClient(clientID);
 					if (!cli)
