@@ -80,9 +80,6 @@ export function draw(canvas: Canvas, ctx: CanvasRenderingContext2D, game: Game, 
 	drawGrid(game.board.grid, 0, 0, palette);
 	drawGrid(game.currentPiece.shape, game.currentPiece.x, game.currentPiece.y, palette);
 
-	/**
-	 * 🔥 Danger zone effect
-	 */
 	const dangerZone = 8;
 	const dangerRows = game.board.grid
 		.slice(0, dangerZone)
@@ -94,5 +91,12 @@ export function draw(canvas: Canvas, ctx: CanvasRenderingContext2D, game: Game, 
 
 		ctx.fillStyle = `rgba(255, 0, 0, ${0.05 + pulse * (0.15 * coef)})`;
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
+	}
+
+	if (game.isDead) {
+		ctx.fillStyle = 'rgba(0,0,0,0.5)';
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.font = "48px serif";
+		ctx.fillText("Game Over", 10, canvas.height / 2);
 	}
 }

@@ -161,7 +161,12 @@ export default function GameCanvas() {
 				console.log("Zebi");
 				return ;
 			}
-			out.push(<div key={index}><NameTag client={client} /> {states[key].score}pts </div>);
+			out.push(
+				<div key={index} style={{backgroundColor: ((states[key].isDead) ? "#FF7F7F" : "#7FFF7F")}}>
+					<NameTag client={client} />
+					{states[key].score}pts 
+				</div>
+			);
 			// out.push(<p> {client.name}: {states[key].score} </p>);
 			// TODO Afficher le nom du joueur / stocker les IDs des joueurs
 		});
