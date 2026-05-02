@@ -13,7 +13,7 @@ CREATE TABLE Player (
     id_player INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL,
-    hash_pwd VARCHAR(150) NOT NULL,
+    hash_pwd TEXT NOT NULL,
     profile_color VARCHAR(7),
     last_sign DATE,
     id_theme INT NOT NULL,
