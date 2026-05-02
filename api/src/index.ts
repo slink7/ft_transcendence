@@ -5,11 +5,12 @@ import { themeRouter } from "./routes/Theme.routes.js";
 import { scoreRouter } from "./routes/Score.routes.js";
 import { gameRouter } from "./routes/Game.routes.js";
 import { metricsHandler, metricsMiddleware } from "./monitoring/metrics.js";
+import { friendRouter } from "./routes/Friend.routes.js";
 
 
 const app = express();
 const port = CONFIG.PORT;
-const baseUrl = "/wextrapi"
+const baseUrl = "/api"
 
 app.use(express.json());
 app.use(metricsMiddleware);
@@ -21,10 +22,12 @@ app.get("/health", (req, res) => {
 app.get("/metrics", metricsHandler);
 
 
-app.use(`${baseUrl}/player`, playerRouter );
+app.use(`${baseUrl}/player`, playerRouter);
 app.use(`${baseUrl}/theme`, themeRouter);
 app.use(`${baseUrl}/score`, scoreRouter);
 app.use(`${baseUrl}/game`, gameRouter);
+app.use(`${baseUrl}/friend`, friendRouter);
+
 
 
 

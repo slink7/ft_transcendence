@@ -6,12 +6,18 @@ export async function getAllScore(req: Request, res: Response, order: "ASC" | "D
     try {
         console.log("try get all Score");
         var scoreResult = await selectAllScore(order);
+        if (scoreResult.rowCount == 0) {
+            res.status(404).send({ error: "No score found" });
+            return;
+        }
         var scoreRows = scoreResult.rows;
         var scoreList: Score[] = [];
         scoreRows.forEach(score => {
             scoreList.push(parseScore(score));
         });
-        res.send(scoreList);
+        res.status(200).send(scoreList);
+        console.log("All score were successfully sent");
+
     }
     catch (err) {
         console.error(err);
@@ -25,8 +31,7 @@ export async function getScore(req: Request, res: Response, order: "ASC" | "DESC
     try {
         console.log(`try get Player ${value}`);
         var scoreResult = await selectScore(value, order, field);
-        if(scoreResult.rowCount == 0)
-        {
+        if (scoreResult.rowCount == 0) {
             res.status(404).send({
                 error: `score ${value} not found`
             });
@@ -37,7 +42,9 @@ export async function getScore(req: Request, res: Response, order: "ASC" | "DESC
         scoreRows.forEach(score => {
             scoreList.push(parseScore(score));
         });
-        res.send(scoreList);
+        res.status(200).send(scoreList);
+        console.log(`score for ${field} ${value} were successfully sent`);
+
     }
     catch (err) {
         console.error(err);

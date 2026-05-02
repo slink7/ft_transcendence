@@ -1,18 +1,23 @@
 import { Request, Response } from "express";
 import { selectAllPlayer, selectPlayer } from "../service/Player.service.js";
-import { Player , parsePlayer } from "../class/Player.js"
+import { Player, parsePlayer } from "../class/Player.js"
 
 
 export async function getAllPlayer(req: Request, res: Response) {
     try {
         console.log("try get all Player");
         var playerResult = await selectAllPlayer();
+        if (playerResult.rowCount == 0) {
+            res.status(404).send({ error: "No player found" });
+            return;
+        }
         var playerRows = playerResult.rows;
         var playerList: Player[] = [];
         playerRows.forEach(player => {
             playerList.push(parsePlayer(player))
         });
-        res.send(playerList);
+        res.status(200).send(playerList);
+            console.log("All player were successfully sent");
     }
     catch (err) {
         console.error(err);
@@ -21,21 +26,19 @@ export async function getAllPlayer(req: Request, res: Response) {
         });
     }
 }
-export async function getPlayer(req: Request, res: Response, field:"id_player" | "username")
-{
+export async function getPlayer(req: Request, res: Response, field: "id_player" | "username") {
     const value = field === "id_player" ? req.params.id_player : req.params.username;
     try {
         console.log(`try get Player ${value}`);
         var playerResult = await selectPlayer(value, field);
-        if(playerResult.rowCount == 0)
-        {
+        if (playerResult.rowCount == 0) {
             res.status(404).send({
                 error: `player ${value} not found`
             });
             return;
         }
-        var player = playerResult.rows[0];
-        res.send(parsePlayer(player)); 
+        res.status(200).send(parsePlayer(playerResult.rows[0]));
+            console.log(`player ${value} were successfully sent`);
     }
     catch (err) {
         console.error(err);
@@ -171,7 +174,7 @@ export async function getPlayer(req: Request, res: Response, field:"id_player" |
 //                     `;
 //     try {
 //         const value = field === "id_player" ? req.params.id_player : req.params.username;
-        // const result = await pool.query(query, [value]);
+// const result = await pool.query(query, [value]);
 //         console.log(`get player with ${field} = ${value} required`);
 
 //         const score:Score[] = [];

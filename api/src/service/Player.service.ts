@@ -25,3 +25,16 @@ export async function selectPlayer(value: any, field:string) {
                 WHERE player.${field}=$1`;
     return await pool.query(query, [value]);
 }
+
+export async function selectPlayerLogin(value:any[]) {
+    const query = `SELECT
+                id_player,
+                username,
+                email,
+                profile_color,
+                last_sign,
+                id_theme
+                FROM player
+                WHERE player.=$1`;
+    return await pool.query(query, [value]);
+}

@@ -2,21 +2,25 @@ import { Friend } from "../class/Friend.js";
 import { pool } from "../db.js";
 
 export async function selectFriendList(id_player:any) {
-    const query = `SELECT 
-                    f.id_friend,
-                    f.statue,
-                    f.date_send,
-                    FROM friend AS f
-                    WHERE  player.id_player = f.id_player
-
-                `;
-
-//                  OR player.id_player = f.id_friend
-//                  LEFT JOIN player AS friend_player
-//                  ON friend_player.id_player =
-//                  case
-//                  WHEN f.id_player = player.id_player THEN f.id_friend
-//                  ELSE f.id_player
-//                  END
-    return pool.query(query);
+    const query = `SELECT
+                    case 
+                        when friend.id_player=$1
+                        then friend.id_friend
+                        else friend.id_player
+                    end
+                    as id,
+                    friend.statue,
+                    friend.send_date,
+                    player.username
+                    from friend
+                    inner join player 
+                    on player.id_player= 
+                    case 
+                        when friend.id_player=$1
+                        then friend.id_friend
+                        else friend.id_player
+                    end
+                    where friend.id_player=$1
+                    or friend.id_friend=$1`
+    return pool.query(query,[id_player]);
 }
