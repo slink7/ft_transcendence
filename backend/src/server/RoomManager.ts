@@ -9,8 +9,8 @@ export type Room = {
 	UUID:			string;
 	clients:		string[];
 	owner:			string;
-	games:			Map<string, Game>
 	gameStarted:	boolean;
+	timerID?:		ReturnType<typeof setInterval>;
 };
 
 export class RoomManager {
@@ -23,8 +23,7 @@ export class RoomManager {
 			UUID: UUID,
 			clients: [],
 			owner: ownerID,
-			games: new Map<string, Game>(),
-			gameStarted: false
+			gameStarted: false,
 		};
 
 		this._rooms.set(UUID, room);
@@ -38,7 +37,6 @@ export class RoomManager {
 		if (room.clients.includes(clientID))
 			return (true);
 		room.clients.push(clientID);
-		room.games.set(clientID, new Game());
 		return (true);
 	}
 
@@ -49,7 +47,6 @@ export class RoomManager {
 		room.clients = room.clients.filter((client) => {
 			return (client !== clientID);
 		});
-		room.games.delete(clientID);
 		if (room.clients.length < 1)
 			this._rooms.delete(roomID);
 		return (true);

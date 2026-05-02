@@ -14,6 +14,7 @@ type Room = {
 	id: string | null;
 	clients: string[];
 	owner: Client;
+	seed: string;
 };
 
 type State = "HOME" | "ROOM" | "GAME";
@@ -52,7 +53,8 @@ export const useStore = create<Store>()(
 				id: null,
 				name: "Bababooey",
 				color: "#000000"
-			}
+			},
+			seed: ""
 		},
 
 		setRoom: (room) =>

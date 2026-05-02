@@ -10,11 +10,13 @@ import RoomTag from "../components/RoomTag.tsx";
 import { useTranslation } from "react-i18next";
 
 import { useRoom } from "../scripts/store.ts";
+import { useClient } from "../scripts/store.ts";
 
 export default function Room() {
 	const { roomID } = useParams();
 	const navigate = useNavigate();
 	const {room, setRoom} = useRoom();
+	const {client, setClient} = useClient();
 	const {t} = useTranslation();
 
 	useEffect(() => {
@@ -29,8 +31,10 @@ export default function Room() {
 		}, "ROOM_INFO");
 
 		const unsubStart = subscribe((msg: ServerMessage) => {
-			if (msg.type === "GAME_START")
+			if (msg.type === "GAME_START") {
+				setRoom({ seed: msg.seed });
 				navigate('/game');
+			}
 		}, "GAME_START");
 
 		return (() => {
@@ -59,10 +63,13 @@ export default function Room() {
 						<NameTag key={k} client={client} as="h3"/>
 					))
 				}
-			<button className="bg-orange-500 shadow-sm transition hover:bg-orange-600 text-yellow-50 py-2 px-4 rounded"
-				onClick={() => send({ type: "START_GAME" })}>
-				{t('room.start')}
-			</button>
+			{
+				room.owner.id === client.id &&
+				<button className="bg-orange-500 shadow-sm transition hover:bg-orange-600 text-yellow-50 py-2 px-4 rounded"
+					onClick={() => send({ type: "START_GAME" })}>
+					{t('room.start')}
+				</button>
+			}
 			<div className="flex gap-4">
 				<button className="bg-blue-500 shadow-sm transition hover:bg-blue-600 text-yellow-50 py-2 px-4 rounded" onClick={() => {
 					navigate("/")

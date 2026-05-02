@@ -1,6 +1,7 @@
 
-import { Board } from "./Board.ts"
-import { Piece } from "./Piece.ts"
+import { Board } from "./Board.ts";
+import { Piece } from "./Piece.ts";
+import { Sfc32 } from "./Sfc32.ts";
 
 export class Game {
 	score: number;
@@ -8,16 +9,24 @@ export class Game {
 	board: Board;
 	currentPiece: Piece;
 
+	prng: Sfc32;
+
+	isDead: boolean;
+
 	frame: number;
 
-	constructor() {
+	constructor(seed: string = "") {
+		this.isDead = false;
 		this.frame = 0;
 		this.score = 0;
 		this.board = new Board();
-		this.currentPiece = new Piece(3, 0);
+		this.prng = new Sfc32(seed);
+		this.currentPiece = new Piece(3, 0, this.prng.next());
 	}
 
 	update() {
+		if (this.isDead)
+			return;
 		if (this.frame++ % 1 != 0)
 			return ;
 		if (this.isValidPosition(this.currentPiece, 0, 1)) {
@@ -39,9 +48,11 @@ export class Game {
 		});
 		let clearedLines: number = this.clearLines();
 		this.score += 10 * clearedLines * clearedLines;
-		this.currentPiece = new Piece();
-		if (!this.isValidPosition(this.currentPiece, 0, 0))
-			this.reset();
+		this.currentPiece = new Piece(3, 0, this.prng.next());
+		if (!this.isValidPosition(this.currentPiece, 0, 0)) {
+			this.currentPiece.x = 100;
+			this.isDead = true;
+		}
 	}
 
 	reset() {
@@ -96,6 +107,8 @@ export class Game {
 	}
 
 	applyInput(input: any) {
+		if (this.isDead)
+			return ;
 		const array = {
 			"ROTATE": () => { this.rotate(); },
 			"RIGHT": () => { this.move(1, 0) },
@@ -126,7 +139,8 @@ export class Game {
 		return {
 			score: this.score,
 			piece: this.currentPiece,
-			board: this.board
+			board: this.board,
+			isDead: this.isDead,
 		};
 	}
 
@@ -134,5 +148,6 @@ export class Game {
 		this.score = state.score;
 		this.currentPiece.set(state.piece);
 		this.board = state.board;
+		this.isDead = state.isDead;
 	}
 }

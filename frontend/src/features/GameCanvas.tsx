@@ -13,7 +13,17 @@ import { useClient, useRoom } from "../scripts/store.ts";
 
 import NameTag from "../components/NameTag.tsx";
 
+import Canvas from "./Canvas.tsx";
+
+import { Game } from "/app/shared/game/Game.ts";
+
 type Cell = number;
+
+type Client = {
+	id: string | null;
+	name: string;
+	color: string;
+}
 
 type Piece = {
 	shape: Cell[][];
@@ -29,15 +39,30 @@ export default function GameCanvas() {
 	const {client, setClient} = useClient();
 	const {room} = useRoom();
 
-	const canvasRef = useRef<HTMLCanvasElement>(null);
+	// const canvasRef = useRef<HTMLCanvasElement>(null);
 	const paletteRef = useRef(0);
 
-	const clientGameRef = useRef<ClientGame>(new ClientGame());
+	const clientGameRef = useRef<ClientGame>(new ClientGame(room.seed));
+	const secondaryGame = useRef<Game>(new Game());
+	const leaderID = useRef("");
+	const leader = useRef<Client>({id:"", name:"", color:""});
 
-	const [states, setStates] = useState({});
+	const [states, setStates] = useState([]);
 
 	let lastScore = -1;
 	const [score, setScore] = useState(0);
+
+	useEffect(() => {
+		if (states.length <= 0)
+			return ;
+		leaderID.current = Object.keys(states).reduce((maxID, ID) => {
+			return (states[ID].score > states[maxID].score ? ID : maxID);
+		});
+		leader.current = room.clients.filter((client) => {
+			return (client.id === leaderID.current);
+		})[0];
+		secondaryGame.current.setState(states[leaderID.current]);
+	}, [states]);
 
 	/**
 	 *  WebSocket
@@ -123,30 +148,6 @@ export default function GameCanvas() {
 		};
 	}, []);
 
-	/**
-	 *  Rendering
-	 */
-	useEffect(() => {
-		const canvas = canvasRef.current!;
-		const ctx = canvas.getContext("2d")!;
-
-		function loop() {
-
-			const game = clientGameRef.current.game;
-			if (game.board && game.currentPiece)
-				draw(canvas, ctx, game, paletteRef.current);
-
-			if (game.score != lastScore) {
-				setScore(game.score);
-				lastScore = game.score;
-			}
-
-			requestAnimationFrame(loop);
-		}
-
-		loop();
-	}, []);
-
 	const [scores, setScores] = useState([]);
 
 	useEffect(() => {
@@ -157,13 +158,14 @@ export default function GameCanvas() {
 				return (client.id === key);
 			})[0];
 			if (!client) {
-				console.log(room.clients);
-				console.log("Zebi");
 				return ;
 			}
-			out.push(<div key={index}><NameTag client={client} /> {states[key].score}pts </div>);
-			// out.push(<p> {client.name}: {states[key].score} </p>);
-			// TODO Afficher le nom du joueur / stocker les IDs des joueurs
+			out.push(
+				<div key={index} style={{backgroundColor: ((states[key].isDead) ? "#FF7F7F" : "#7FFF7F")}}>
+					<NameTag client={client} />
+					{states[key].score}pts
+				</div>
+			);
 		});
 
 		setScores(out);
@@ -175,13 +177,30 @@ export default function GameCanvas() {
 	return (
 		<div className="flex flex-col items-center gap-4">
 			<h2 className="text-2xl font-bold bg-yellow-400 rounded-2xl px-4 py-2">Score : {clientGameRef.current.game.score}</h2>
-			<canvas
-				ref={canvasRef}
-				width={REAL_WIDTH}
-				height={REAL_HEIGHT}
-			/>
+			<div style={{display: "flex", gap: "10px"}}>
+				<Canvas
+					cell_size={20}
+					game={clientGameRef.current.game}
+					palette={paletteRef.current}
+				/>
+				<div>
+					{
+						room.clients.length > 1 && <>
+							<div> Leader: <NameTag client={leader.current} /></div>
+							{
+								secondaryGame.current &&
+								<Canvas
+									cell_size={10}
+									game={secondaryGame.current}
+									palette={paletteRef.current}
+								/>
+							}
+						</>
+					}
+				</div>
+			</div>
 			{
-				scores
+				room.clients.length > 1 && scores
 			}
 			{
 				<div className="controls flex gap-4">
