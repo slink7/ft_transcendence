@@ -11,6 +11,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-123456}
       - POSTGRES_USER=${POSTGRES_USER:-basic}
       - POSTGRES_DB=${POSTGRES_DB:-transcendence}
+      - JWT_SECRET=justeuntestdejwthassoulcamarche
     depends_on:
       - database
     volumes:
