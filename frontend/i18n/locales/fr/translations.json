@@ -42,6 +42,8 @@
 		"set": "Choisir"
 	},
 	"room": {
+		"owner_prefix": "Salle de ",
+		"owner_suffix": "",
 		"id": "Identifiant de la salle:",
 		"copy": "Copier",
 		"players": "Joueurs",

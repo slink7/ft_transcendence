@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import NameTag from "./NameTag.tsx";
 
 type Client = {
@@ -18,10 +20,11 @@ type Props = {
 
 export default function RoomTag({room, as = "span", clientCount = false}: Props) {
 	const Tag = as;
+	const {t} = useTranslation();
 
 	return (
 		<Tag>
-			<NameTag client={room.owner} as="span"/>'s room {clientCount && <span> (connected : {room.clients.length}) </span>}
+			{t("room.owner_prefix")}<NameTag client={room.owner} as="span"/>{t("room.owner_suffix")} {clientCount && <span> (connected : {room.clients.length}) </span>}
 		</Tag>
 	);
 }

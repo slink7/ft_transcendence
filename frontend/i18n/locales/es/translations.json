@@ -42,6 +42,8 @@
 		"set": "Configurar"
 	},
 	"room": {
+		"owner_prefix": "Aula de ",
+		"owner_suffix": "",
 		"id": "Partido ID:",
 		"copy": "Copiar",
 		"players": "Jugadores",

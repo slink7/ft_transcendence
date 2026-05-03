@@ -43,6 +43,8 @@
 		"set": "Set"
 	},
 	"room": {
+		"owner_prefix": "",
+		"owner_suffix": "'s room",
 		"id": "Room ID:",
 		"copy": "Copy",
 		"players": "Players",
