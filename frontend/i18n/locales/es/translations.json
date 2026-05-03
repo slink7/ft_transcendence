@@ -19,12 +19,12 @@
 		"notfound": "Cuenta no encontrada"
 	},
 	"navbar": {
-		"profile": "Perfile",
+		"profile": "Perfil",
 		"title": "-Wextetris"
 	},
 	"home": {
 		"title": "Menú",
-		"welcome": "Benvenido",
+		"welcome": "Bienvenido",
 		"customization": "Personalización",
 		"storage": "Clear localStorage",
 		"room": "Partidos",
