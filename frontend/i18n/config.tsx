@@ -5,6 +5,7 @@ import { initReactI18next } from "react-i18next";
 
 import enTranslations from "./locales/en/translations.json"
 import frTranslations from "./locales/fr/translations.json"
+import esTranslations from "./locales/es/translations.json"
 
 i18n
 	.use(initReactI18next)
@@ -15,9 +16,12 @@ i18n
 			},
 			fr: {
 				translations: frTranslations
+			},
+			es: {
+				translations: esTranslations
 			}
 		},
-		supportedLngs : ['en', 'fr'],
+		supportedLngs : ['en', 'fr', 'es'],
 		lng: "en",
 		interpolation: {
 			escapeValue: false

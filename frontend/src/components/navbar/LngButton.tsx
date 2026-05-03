@@ -11,6 +11,9 @@ export default function LngButton() {
 			<button className="bg-orange-500 transition hover:bg-orange-600 text-yellow-50 py-2 px-4 rounded" onClick={changeLanguage} value='en'>
 				{t('lng.en')}
 			</button>
+			<button className="bg-orange-500 transition hover:bg-orange-600 text-yellow-50 py-2 px-4 rounded" onClick={changeLanguage} value='es'>
+				{t('lng.es')}
+			</button>
 			<button className="bg-orange-500 transition hover:bg-orange-600 text-yellow-50 py-2 px-4 rounded" onClick={changeLanguage} value='fr'>
 				{t('lng.fr')}
 			</button>

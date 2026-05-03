@@ -1,0 +1,41 @@
+{
+	"lng": {
+		"en": "English",
+		"fr": "Français",
+		"es": "Español"
+	},
+	"navbar": {
+		"profile": "Perfile",
+		"title": "-Wextetris"
+	},
+	"home": {
+		"title": "Menú",
+		"welcome": "Benvenido",
+		"customization": "Personalización",
+		"storage": "Clear localStorage",
+		"room": "Partidos",
+		"join": "Join",
+		"create": "Formar un partido",
+		"list": "Lista de partidos",
+		"refresh": "Actualizar"
+	},
+	"name": {
+		"generate": "Generar Nombre aleatorio",
+		"set": "Configurar"
+	},
+	"color": {
+		"generate": "Generar Color aleatorio",
+		"set": "Configurar"
+	},
+	"room": {
+		"id": "Partido ID:",
+		"copy": "Copiar",
+		"players": "Jugadores",
+		"start": "Iniciar el juego",
+		"home": "Volver a inicio",
+		"quit": "Dejar el partido"
+	},
+	"game": {
+		"title": "Juego"
+	}
+}

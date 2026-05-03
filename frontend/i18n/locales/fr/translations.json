@@ -1,7 +1,8 @@
 {
 	"lng": {
 		"en": "English",
-		"fr": "Français"
+		"fr": "Français",
+		"es": "Español"
 	},
 	"navbar": {
 		"profile": "Profil",
