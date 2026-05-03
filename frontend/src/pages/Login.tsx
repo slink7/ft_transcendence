@@ -26,7 +26,7 @@ export default function Login() {
 					className="text-sm cursor-pointer underline"
 					onClick={() => setMode("signup")}
 				>
-					Don't have an account? Sign up
+					{t("login.dont")}
 				</p>
 			</div>
 		)
@@ -39,7 +39,7 @@ export default function Login() {
 				className="text-sm cursor-pointer underline"
 				onClick={() => setMode("signin")}
 			>
-				Already have an account? Sign in
+				{t("login.already")}
 			</p>
 		</div>
 	);

@@ -4,6 +4,21 @@
 		"fr": "Français",
 		"es": "Español"
 	},
+	"login": {
+		"in": "Sign in",
+		"dont": "Don't have an account? Sign up",
+		"up": "Sign up",
+		"already": "Already have an account? Sign in",
+		"create": "Create account",
+		"created": "Account created!",
+		"error": "Error",
+		"pass": "Password",
+		"user": "Username",
+		"log": "Login",
+		"invalid": "Invalid credentials",
+		"notfound": "Account not found"
+
+	},
 	"navbar": {
 		"profile": "Profile",
 		"title": "-Wextetris"
@@ -37,5 +52,9 @@
 	},
 	"game": {
 		"title": "Game"
+	},
+	"legal": {
+		"privacy": "Privacy Policy",
+		"terms": "Terms of Service"
 	}
 }

@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 export default function SignIn() {
 	const navigate = useNavigate();
 	const { login } = useAuth();
+	const {t} = useTranslation();
+
 
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
@@ -14,7 +16,7 @@ export default function SignIn() {
 		const stored = localStorage.getItem("user_credentials");
 
 		if (!stored) {
-			alert("No account found");
+			alert(t("login.notfound"));
 			return;
 		}
 
@@ -24,24 +26,24 @@ export default function SignIn() {
 			login(username);
 			navigate("/");
 		} else {
-			alert("Invalid credentials");
+			alert(t("login.invalid"));
 		}
 	};
 
 	return (
 		<div className="flex flex-col items-center gap-4 mt-20">
-			<h1 className="text-2xl">Sign In</h1>
+			<h1 className="text-2xl">{t("login.in")}</h1>
 
-			<input className="border p-2 rounded" placeholder="Username" value={username}
+			<input className="border p-2 rounded" placeholder={t("login.user")} value={username}
 			onChange={(e) => setUsername(e.target.value)}
 			/>
 
-			<input className="border p-2 rounded" type="password" placeholder="Password" value={password}
+			<input className="border p-2 rounded" type="password" placeholder={t("login.pass")} value={password}
 			onChange={(e) => setPassword(e.target.value)}
 			/>
 
 			<button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleLogin}> 
-			Login
+			{t("login.log")}
 			</button>
 		</div>
 	);
