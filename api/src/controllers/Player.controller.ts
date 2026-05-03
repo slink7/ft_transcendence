@@ -61,13 +61,42 @@ export async function loginPlayer(req: Request, res: Response) {
             });
         }
         console.log(`try get Player ${email}`);
+    const { email, pwd } = req.body
+    try {
+
+        const value = [email, pwd];
+        if (!email || !pwd) {
+            return res.status(400).send({
+                error: "Missing required fields"
+            });
+        }
+        console.log(`try get Player ${email}`);
         var playerResult = await selectPlayerLogin(value);
         if (playerResult.rowCount == 0) {
             res.status(404).send({
                 error: `player ${email} not found`
+                error: `player ${email} not found`
             });
             return;
         }
+        const jwtSecret = process.env.JWT_SECRET;
+        if (!jwtSecret) {
+            throw new Error("JWT_SECRET is missing from environment variables");
+        }
+        const player: Player = parsePlayer(playerResult.rows[0]);
+        const token = jwt.sign(
+            {
+                id: player.id_player,
+                username: player.username,
+                id_theme: player.id_theme
+            },
+            jwtSecret,
+            {
+                expiresIn: "1h"
+            }
+        );
+        res.status(200).send(token);
+        console.log(`player ${email} were successfully sent`);
         const jwtSecret = process.env.JWT_SECRET;
         if (!jwtSecret) {
             throw new Error("JWT_SECRET is missing from environment variables");
@@ -114,6 +143,7 @@ export async function addPlayer(req: Request, res: Response) {
         }
         res.status(201).send(`player ${username} succesfully created`);
     }
+    catch (err: any) {
     catch (err: any) {
 
         if (err.code === "23505") {
