@@ -7,7 +7,6 @@ import { gameRouter } from "./routes/Game.routes.js";
 import { metricsHandler, metricsMiddleware } from "./monitoring/metrics.js";
 import { friendRouter } from "./routes/Friend.routes.js";
 
-
 const app = express();
 const port = CONFIG.PORT;
 const baseUrl = "/api"

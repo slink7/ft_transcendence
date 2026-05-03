@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { insertPlayer, selectAllPlayer, selectPlayer, selectPlayerLogin } from "../service/Player.service.js";
 import { Player, parsePlayer } from "../class/Player.js"
-import { log } from "node:console";
 import jwt from "jsonwebtoken";
 
 
