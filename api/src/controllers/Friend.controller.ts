@@ -4,7 +4,7 @@ import { selectFriendList } from "../service/Friend.service.js";
 
 export async function getFriendList(req:Request, res:Response)
 {
-    var value = req.params.id_player;
+    var value = req.user?.id;
     try {
             console.log("try get all friend");
             var friendResult = await selectFriendList(value);

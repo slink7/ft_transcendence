@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { insertPlayer, selectAllPlayer, selectPlayer, selectPlayerLogin } from "../service/Player.service.js";
 import { Player, parsePlayer } from "../class/Player.js"
-import { log } from "node:console";
+import jwt from "jsonwebtoken";
 
 
 export async function getAllPlayer(req: Request, res: Response) {
@@ -51,19 +51,40 @@ export async function getPlayer(req: Request, res: Response, field: "id_player" 
 }
 
 export async function loginPlayer(req: Request, res: Response) {
-    var value: any[] = [];
+    const { email, pwd } = req.body
     try {
-        value.push(req.body.email, req.body.pwd);
-        console.log(`try get Player ${value[0]}`);
+        const value = [email, pwd];
+        if (!email || !pwd) {
+            return res.status(400).send({
+                error: "Missing required fields"
+            });
+        }
+        console.log(`try get Player ${email}`);
         var playerResult = await selectPlayerLogin(value);
         if (playerResult.rowCount == 0) {
             res.status(404).send({
-                error: `player ${value[0]} not found`
+                error: `player ${email} not found`
             });
             return;
         }
-        res.status(200).send(parsePlayer(playerResult.rows[0]));
-        console.log(`player ${value} were successfully sent`);
+        const jwtSecret = process.env.JWT_SECRET;
+        if (!jwtSecret) {
+            throw new Error("JWT_SECRET is missing from environment variables");
+        }
+        const player: Player = parsePlayer(playerResult.rows[0]);
+        const token = jwt.sign(
+            {
+                id: player.id_player,
+                username: player.username,
+                id_theme: player.id_theme
+            },
+            jwtSecret,
+            {
+                expiresIn: "1h"
+            }
+        );
+        res.status(200).send(token);
+        console.log(`player ${email} were successfully sent`);
     }
     catch (err) {
         console.error(err);
@@ -92,7 +113,7 @@ export async function addPlayer(req: Request, res: Response) {
         }
         res.status(201).send(`player ${username} succesfully created`);
     }
-    catch (err:any) {
+    catch (err: any) {
 
         if (err.code === "23505") {
             return res.status(409).send({
